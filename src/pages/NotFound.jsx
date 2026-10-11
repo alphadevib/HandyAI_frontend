@@ -4,10 +4,10 @@ export default function NotFound() {
   return (
     <section className="not-found">
       <p className="eyebrow">404</p>
-      <h1>That page does not exist</h1>
-      <p>The link may be old, or the page may have moved.</p>
+      <h1>This aisle is empty</h1>
+      <p>The link may be old, or the shelf was moved. The good stuff is one click away.</p>
       <Link to="/" className="btn btn-primary btn-lg">
-        Back to the home page
+        Back to the storefront
       </Link>
     </section>
   )

@@ -1,37 +1,28 @@
-import { useId } from 'react'
-
 /**
- * The HandyAI mark: an "H" whose crossbar curves like a handle and whose right stem is capped by
- * an AI spark. Same artwork as public/favicon.svg.
+ * The HandyAI mark: a lower-case "h" whose right leg wears a lime dot, so the glyph reads as
+ * "h" + the dot of an "i" (handy + AI). Dark tile, so it holds on both themes. Same artwork as
+ * public/favicon.svg.
  */
 export function BrandMark({ size = 36, className }) {
-  const gradient = useId()
   return (
     <svg
-      className={className}
+      className={`brand-mark ${className ?? ''}`}
       width={size}
       height={size}
       viewBox="0 0 64 64"
       role="img"
       aria-hidden="true"
     >
-      <defs>
-        <linearGradient id={gradient} x1="6" y1="4" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stopColor="#6D0A12" />
-          <stop offset="0.55" stopColor="#E5202E" />
-          <stop offset="1" stopColor="#FF6B6B" />
-        </linearGradient>
-      </defs>
-      <rect x="2" y="2" width="60" height="60" rx="17" fill={`url(#${gradient})`} />
-      <g fill="none" stroke="#fff" strokeLinecap="round" strokeWidth="6.5">
-        <path d="M20 17v31" />
-        <path d="M44 31v17" />
-        <path d="M20 35c5 5.5 19 5.5 24 0" />
-      </g>
+      <rect x="1.5" y="1.5" width="61" height="61" rx="18" fill="#0c0c0d" stroke="rgba(255,255,255,0.16)" strokeWidth="1.5" />
       <path
-        fill="#fff"
-        d="M44 6.5c.9 4.6 2.9 6.6 7.5 7.5-4.6.9-6.6 2.9-7.5 7.5-.9-4.6-2.9-6.6-7.5-7.5 4.6-.9 6.6-2.9 7.5-7.5z"
+        d="M21 14v36M21 37c0-8 5.2-12.5 11.5-12.5S44 29 44 37v13"
+        fill="none"
+        stroke="#f4f4f1"
+        strokeWidth="7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
+      <circle className="brand-dot" cx="44" cy="14.5" r="5.5" fill="#d4f25a" />
     </svg>
   )
 }
@@ -39,7 +30,7 @@ export function BrandMark({ size = 36, className }) {
 export function Wordmark() {
   return (
     <span className="wordmark">
-      Handy<span className="wordmark-ai">AI</span>
+      HANDY<span className="wordmark-dot">.</span>AI
     </span>
   )
 }

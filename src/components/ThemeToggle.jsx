@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Icon } from './Icons'
 
 const STORAGE_KEY = 'handyai.theme'
-const THEME_COLOURS = { dark: '#0a0a0b', light: '#f1f1ef' }
+const THEME_COLOURS = { dark: '#0c0c0d', light: '#f5f5f2' }
 
 function currentTheme() {
   return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'

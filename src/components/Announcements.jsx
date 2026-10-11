@@ -69,15 +69,14 @@ function WelcomeNote({ onClose }) {
         <span className="sr-only">Close</span>
       </button>
       <BrandMark size={44} />
-      <h2 id="welcome-title">Welcome to HandyAI</h2>
+      <h2 id="welcome-title">Welcome to the shelf</h2>
       <p>
-        We have just opened our doors. Compare AI tools by price, ask the AI Chat what fits your
-        work, and keep every subscription in one place. You are one of our very first visitors,
-        so your ideas shape what we build next.
+        HandyAI lines up AI tools by what they cost and what they are good at. Look around, ask
+        the concierge, and tell us what is missing. You are early, so your ideas move the roadmap.
       </p>
       <div className="form-actions">
         <Link to="/marketplace" className="btn btn-primary btn-sm" onClick={onClose}>
-          Explore the marketplace
+          Start shopping
         </Link>
         <button
           type="button"

@@ -8,6 +8,17 @@
  */
 export const RELEASES = [
   {
+    version: '2.2.0',
+    title: 'The shelf got a makeover',
+    highlights: [
+      'A calmer dark storefront with a cleaner, more readable typeface',
+      'Navigation now lives on the right edge (bottom on phones), with prices and theme beside it',
+      'Listings that read like a shop: ratings, savings badges and a one-tap "try it"',
+      'Tool pages laid out like product pages, with billing you can switch in place',
+      'A new HandyAI logo, and buttons that bloom from wherever you point',
+    ],
+  },
+  {
     version: '2.1.0',
     title: 'A brand-new launch look',
     highlights: [

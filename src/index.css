@@ -1,56 +1,54 @@
 /* Design tokens and element defaults. Component styles live in App.css.
-   The look follows a sneaker-launch layout: near-black, white and one hot red, with heavy
-   extended italic headlines. Two themes, switched by data-theme on <html>: dark (the default)
-   and light. Every colour in App.css comes from these tokens, so a theme is just this block. */
+   A dark, minimal storefront: carbon surfaces, off-white type and buttons, one lime accent used
+   sparingly, wide upper-case display headlines over a quiet sans. Two themes, switched by
+   data-theme on <html>: dark (the default) and light. Every colour in App.css comes from here. */
 
 :root {
-  /* Dark: carbon black with a launch-day red. */
-  --bg: #0a0a0b;
-  --bg-glow: radial-gradient(1100px 560px at 88% -12%, rgba(229, 32, 46, 0.14), transparent 60%),
-    radial-gradient(900px 520px at -12% 30%, rgba(255, 255, 255, 0.035), transparent 60%);
-  --bg-lines: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' fill='none' stroke='%23ffffff' stroke-opacity='.05'%3E%3Cpath d='M-50 820C300 520 620 980 940 640s520-420 760-200'/%3E%3Cpath d='M-80 180c360 140 520-120 860 40s560 420 900 160'/%3E%3C/svg%3E");
-  --surface: #131315;
+  --bg: #0c0c0d;
+  --bg-glow: radial-gradient(900px 480px at 85% -10%, rgba(212, 242, 90, 0.05), transparent 60%);
+  --surface: #141416;
   --surface-2: #1b1b1e;
   --surface-3: #26262a;
-  --glass: rgba(19, 19, 21, 0.66);
-  --glass-strong: rgba(10, 10, 11, 0.86);
+  --glass: rgba(20, 20, 22, 0.7);
+  --glass-strong: rgba(12, 12, 13, 0.88);
   --border: rgba(255, 255, 255, 0.07);
   --border-strong: rgba(255, 255, 255, 0.14);
-  --text: #b9b9bf;
-  --text-strong: #ffffff;
-  --text-muted: #85858d;
-  --accent: #e5202e;
-  --accent-strong: #ff3b48;
-  --accent-deep: #9e0f19;
-  --accent-soft: rgba(229, 32, 46, 0.13);
-  --accent-glow: rgba(229, 32, 46, 0.42);
-  --accent-contrast: #ffffff;
-  --headline-thin: rgba(255, 255, 255, 0.55);
-  --ink: #f5f5f4;
-  --ink-text: #0a0a0b;
-  --scrim: rgba(0, 0, 0, 0.72);
-  --teal: #fca5a5;
-  --teal-soft: rgba(252, 165, 165, 0.12);
-  --success: #6ee7b7;
-  --success-soft: rgba(110, 231, 183, 0.12);
+  --text: #a9a9b1;
+  --text-strong: #f4f4f1;
+  --text-muted: #76767f;
+  --accent: #d4f25a;
+  --accent-strong: #e4ff7a;
+  --accent-deep: #9cb82a;
+  --accent-soft: rgba(212, 242, 90, 0.12);
+  --accent-glow: rgba(212, 242, 90, 0.32);
+  --accent-contrast: #0c0c0d;
+  --headline-thin: rgba(244, 244, 241, 0.5);
+  --ink: #f4f4f1;
+  --ink-text: #0c0c0d;
+  --scrim: rgba(0, 0, 0, 0.7);
+  --star: #ffc633;
+  --sale: #ff6b5b;
+  --sale-soft: rgba(255, 107, 91, 0.13);
+  --teal: #8be0c0;
+  --teal-soft: rgba(139, 224, 192, 0.12);
+  --success: #8be0c0;
+  --success-soft: rgba(139, 224, 192, 0.12);
   --warning: #fbbf24;
   --warning-soft: rgba(251, 191, 36, 0.13);
-  --danger: #ff7a70;
-  --danger-soft: rgba(255, 122, 112, 0.12);
-  --brand-gradient: linear-gradient(135deg, #6d0a12 0%, #e5202e 55%, #ff6b6b 100%);
-  --hero-gradient: radial-gradient(70% 90% at 50% 45%, rgba(229, 32, 46, 0.16), transparent 60%),
-    linear-gradient(160deg, #19191c 0%, #0f0f11 55%, #0a0a0b 100%);
-  --sheen: rgba(255, 255, 255, 0.03);
+  --danger: #ff7a6b;
+  --danger-soft: rgba(255, 122, 107, 0.12);
+  --brand-gradient: linear-gradient(135deg, #d4f25a 0%, #8be0c0 100%);
+  --sheen: rgba(255, 255, 255, 0.02);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
-  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35);
-  --radius-xs: 6px;
-  --radius-sm: 10px;
-  --radius-md: 14px;
+  --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.3);
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 16px;
   --radius-lg: 20px;
+  --radius-xl: 28px;
   --max-width: 1240px;
-  --nav-height: 72px;
   --display: 'Archivo', 'Arial Black', 'Segoe UI', system-ui, sans-serif;
   --sans: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
   --ease-spring: cubic-bezier(0.22, 1.4, 0.36, 1);
@@ -66,46 +64,47 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Light: warm paper grey with the same red, a shade deeper so it reads on white. The home hero
-   stays a black card in both themes, like the reference. */
+/* Light: paper white with the same structure; the lime deepens to olive so it reads on white. */
 :root[data-theme='light'] {
-  --bg: #f1f1ef;
-  --bg-glow: radial-gradient(1100px 560px at 88% -12%, rgba(229, 32, 46, 0.08), transparent 60%),
-    radial-gradient(900px 520px at -12% 30%, rgba(0, 0, 0, 0.03), transparent 60%);
-  --bg-lines: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' fill='none' stroke='%23e5202e' stroke-opacity='.16'%3E%3Cpath d='M-50 820C300 520 620 980 940 640s520-420 760-200'/%3E%3Cpath d='M-80 180c360 140 520-120 860 40s560 420 900 160'/%3E%3C/svg%3E");
+  --bg: #f5f5f2;
+  --bg-glow: radial-gradient(900px 480px at 85% -10%, rgba(120, 150, 0, 0.06), transparent 60%);
   --surface: #ffffff;
-  --surface-2: #ececea;
-  --surface-3: #dfdfdb;
-  --glass: rgba(255, 255, 255, 0.72);
+  --surface-2: #efefeb;
+  --surface-3: #e2e2dd;
+  --glass: rgba(255, 255, 255, 0.75);
   --glass-strong: rgba(255, 255, 255, 0.92);
-  --border: rgba(10, 10, 11, 0.08);
-  --border-strong: rgba(10, 10, 11, 0.16);
-  --text: #3d3d43;
-  --text-strong: #0a0a0b;
-  --text-muted: #6b6b73;
-  --accent: #d61c2a;
-  --accent-strong: #b0121e;
-  --accent-deep: #7f0b14;
-  --accent-soft: rgba(214, 28, 42, 0.09);
-  --accent-glow: rgba(214, 28, 42, 0.28);
+  --border: rgba(12, 12, 13, 0.08);
+  --border-strong: rgba(12, 12, 13, 0.16);
+  --text: #46464d;
+  --text-strong: #0c0c0d;
+  --text-muted: #73737b;
+  --accent: #5a7300;
+  --accent-strong: #465a00;
+  --accent-deep: #344300;
+  --accent-soft: rgba(90, 115, 0, 0.1);
+  --accent-glow: rgba(90, 115, 0, 0.25);
   --accent-contrast: #ffffff;
-  --headline-thin: rgba(10, 10, 11, 0.55);
-  --ink: #0a0a0b;
-  --ink-text: #f5f5f4;
-  --scrim: rgba(10, 10, 11, 0.45);
-  --teal: #b91c1c;
-  --teal-soft: rgba(185, 28, 28, 0.08);
+  --headline-thin: rgba(12, 12, 13, 0.5);
+  --ink: #0c0c0d;
+  --ink-text: #f5f5f2;
+  --scrim: rgba(12, 12, 13, 0.45);
+  --star: #e3a008;
+  --sale: #d93a2b;
+  --sale-soft: rgba(217, 58, 43, 0.1);
+  --teal: #0f766e;
+  --teal-soft: rgba(15, 118, 110, 0.1);
   --success: #047857;
   --success-soft: rgba(4, 120, 87, 0.1);
   --warning: #b45309;
   --warning-soft: rgba(217, 119, 6, 0.12);
   --danger: #c2410c;
   --danger-soft: rgba(194, 65, 12, 0.1);
+  --brand-gradient: linear-gradient(135deg, #5a7300 0%, #0f766e 100%);
   --sheen: rgba(255, 255, 255, 0);
-  --shadow-sm: 0 1px 2px rgba(10, 10, 11, 0.06);
-  --shadow-md: 0 12px 30px rgba(10, 10, 11, 0.08);
-  --shadow-lg: 0 24px 60px rgba(10, 10, 11, 0.16);
-  --shadow-float: 0 10px 28px rgba(10, 10, 11, 0.1), 0 2px 6px rgba(10, 10, 11, 0.06);
+  --shadow-sm: 0 1px 2px rgba(12, 12, 13, 0.06);
+  --shadow-md: 0 12px 30px rgba(12, 12, 13, 0.08);
+  --shadow-lg: 0 24px 60px rgba(12, 12, 13, 0.14);
+  --shadow-float: 0 10px 28px rgba(12, 12, 13, 0.1), 0 2px 6px rgba(12, 12, 13, 0.06);
 
   color-scheme: light;
 }
@@ -131,7 +130,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg-lines) center / cover no-repeat, var(--bg-glow), var(--bg);
+  background: var(--bg-glow), var(--bg);
   background-attachment: fixed;
   color: var(--text);
 }
@@ -148,29 +147,29 @@ h3 {
   color: var(--text-strong);
   line-height: 1.05;
   margin: 0 0 0.5rem;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
   font-weight: 700;
 }
 
-/* Page and section headlines: heavy, extended, italic and upper case, like a launch poster. */
+/* Headlines: wide, heavy and upper case, like a storefront banner. */
 h1,
 h2 {
-  font-weight: 900;
-  font-style: italic;
-  font-stretch: 118%;
+  font-weight: 850;
+  font-stretch: 125%;
   text-transform: uppercase;
 }
 
 h1 {
-  font-size: clamp(2rem, 5.5vw, 3.4rem);
+  font-size: clamp(1.9rem, 5vw, 3.2rem);
 }
 
 h2 {
-  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  font-size: clamp(1.25rem, 2.8vw, 1.75rem);
 }
 
 h3 {
-  font-size: 1.05rem;
+  font-size: 1.02rem;
+  font-stretch: 105%;
 }
 
 p {

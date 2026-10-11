@@ -35,9 +35,9 @@ export default function Categories() {
   return (
     <section className="page">
       <header className="page-head">
-        <p className="eyebrow">Categories</p>
-        <h1>Browse AI tools by the job they do</h1>
-        <p className="lede">Pick a category to open it in the marketplace with prices and plans.</p>
+        <p className="eyebrow">The aisles</p>
+        <h1>Shop by the job, not the buzzword</h1>
+        <p className="lede">Thirteen aisles, sorted by what you are trying to get done. Step into one to compare every price in it.</p>
       </header>
 
       <Message>{error}</Message>

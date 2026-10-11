@@ -61,9 +61,9 @@ export default function Subscriptions() {
     <section className="page subs-page">
       <header className="page-head row">
         <div>
-          <p className="eyebrow">My subscriptions</p>
-          <h1>Your AI stack</h1>
-          <p className="lede">Plans you pay for, what they cost together, and when each one renews.</p>
+          <p className="eyebrow">My stack</p>
+          <h1>Everything you pay for, on one receipt</h1>
+          <p className="lede">What each plan costs, what they cost together, and which one renews next.</p>
         </div>
         <Link to="/marketplace" className="btn btn-primary">
           <Icon name="plus" size={18} /> Add from marketplace

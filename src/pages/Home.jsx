@@ -1,20 +1,43 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../api/client'
-import { Icon, CategoryIcon } from '../components/Icons'
+import { CategoryIcon, Icon } from '../components/Icons'
 import Message from '../components/Message'
 import ProductCard from '../components/ProductCard'
 import Spinner from '../components/Spinner'
 import ToolLogo from '../components/ToolLogo'
-import HeroSpotlight from '../components/HeroSpotlight'
 import { useAuth } from '../context/AuthContext'
+import { usePrefs } from '../context/PrefsContext'
 import { useFavoriteToggle } from '../hooks'
 import { Link, navigate } from '../router'
 
-const MARQUEE = ['Compare prices', 'Matched to your work', 'Ask by voice', 'Track every plan']
+const STEPS = [
+  {
+    title: 'Line them up',
+    text: 'Monthly, quarterly and annual plans side by side, in rupees or dollars. No “contact sales” maze.',
+  },
+  {
+    title: 'Say what you need',
+    text: 'Describe the job out loud or in a sentence. The concierge narrows thirty-nine tools down to four.',
+  },
+  {
+    title: 'Keep the receipts',
+    text: 'Log what you pay for and see every renewal coming before it quietly charges your card.',
+  },
+]
 
-/** The storefront: search, personalised picks, categories and what is popular right now. */
+/** A four-pointed sparkle, like the stars scattered around a storefront hero. */
+function Sparkle({ className }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 0c.8 6.4 5.6 11.2 12 12-6.4.8-11.2 5.6-12 12-.8-6.4-5.6-11.2-12-12C6.4 11.2 11.2 6.4 12 0z" />
+    </svg>
+  )
+}
+
+/** The storefront: hero, best sellers, free picks, aisles and the concierge. */
 export default function Home() {
   const { user, isAuthenticated } = useAuth()
+  const { currency } = usePrefs()
   const [stats, setStats] = useState(null)
   const [categories, setCategories] = useState([])
   const [trending, setTrending] = useState([])
@@ -22,26 +45,25 @@ export default function Home() {
   const [forYou, setForYou] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
+  const [job, setJob] = useState('')
 
+  // Each shelf fills in as soon as its own data arrives, so one slow request holds up nothing.
   useEffect(() => {
     const controller = new AbortController()
-    Promise.all([
-      api.stats(controller.signal),
-      api.categories(controller.signal),
-      api.trending(48, controller.signal),
-      api.tools({ freePlan: true, size: 4, sort: 'rating' }, controller.signal),
-    ])
-      .then(([statsResult, categoryResult, trendingResult, freeResult]) => {
-        setStats(statsResult)
-        setCategories(categoryResult)
-        setTrending(trendingResult)
-        setFreeTools(freeResult.content)
-      })
-      .catch((loadError) => {
-        if (loadError.name !== 'AbortError') setError(loadError.message)
-      })
-      .finally(() => setLoading(false))
+    const fail = (loadError) => {
+      if (loadError.name !== 'AbortError') setError(loadError.message)
+    }
+    api.stats(controller.signal).then(setStats).catch(fail)
+    api.categories(controller.signal).then(setCategories).catch(fail)
+    api
+      .tools({ freePlan: true, size: 4, sort: 'rating' }, controller.signal)
+      .then((result) => setFreeTools(result.content))
+      .catch(fail)
+    api
+      .trending(12, controller.signal)
+      .then(setTrending)
+      .catch(fail)
+      .finally(() => !controller.signal.aborted && setLoading(false))
     return () => controller.abort()
   }, [isAuthenticated])
 
@@ -50,7 +72,7 @@ export default function Home() {
     if (!profession) return undefined
     const controller = new AbortController()
     api
-      .recommend({ profession, limit: 8 }, controller.signal)
+      .recommend({ profession, limit: 4 }, controller.signal)
       .then((result) => setForYou(result.recommendations))
       .catch(() => setForYou([]))
     return () => controller.abort()
@@ -63,25 +85,82 @@ export default function Home() {
   }, [])
   const favorites = useFavoriteToggle(applyEverywhere)
 
-  const submitSearch = (event) => {
+  const askConcierge = (event) => {
     event.preventDefault()
-    navigate(`/marketplace${search.trim() ? `?q=${encodeURIComponent(search.trim())}` : ''}`)
+    const text = job.trim()
+    navigate(text ? `/chat?q=${encodeURIComponent(text)}` : '/chat')
   }
 
-  const showcase = trending.slice(0, 3)
+  const stack = trending.slice(0, 3)
+  const featuredAisles = [...categories].sort((a, b) => b.toolCount - a.toolCount).slice(0, 4)
+  const otherAisles = categories.filter((item) => !featuredAisles.includes(item))
 
   return (
     <>
-      <HeroSpotlight tools={trending} />
+      <section className="shop-hero">
+        <div className="shop-hero-copy">
+          <h1>
+            Find the AI that works <span className="hero-outline">the way</span> you do
+          </h1>
+          <p className="lede">
+            Every tool priced side by side, sorted by the work it does and matched to your
+            profession. Shop smart, subscribe once, and stop paying for the ones you forgot.
+          </p>
+          <div className="hero-actions">
+            <Link to="/marketplace" className="btn btn-primary btn-lg">
+              Start shopping <Icon name="arrow" size={18} />
+            </Link>
+            <Link to="/chat" className="btn btn-secondary btn-lg">
+              Describe a task
+            </Link>
+          </div>
+          <dl className="hero-stats">
+            <div>
+              <dt>{stats?.toolCount ?? '39'}+</dt>
+              <dd>Tools on the shelf</dd>
+            </div>
+            <div>
+              <dt>{stats?.categoryCount ?? '13'}</dt>
+              <dd>Aisles to browse</dd>
+            </div>
+            <div>
+              <dt>3</dt>
+              <dd>Ways to pay, compared</dd>
+            </div>
+          </dl>
+        </div>
 
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
+        <div className="shop-hero-art" aria-hidden="true">
+          <Sparkle className="sparkle sparkle-lg" />
+          <Sparkle className="sparkle sparkle-sm" />
+          <div className="tile-stack">
+            {(stack.length ? stack : [null, null, null]).map((tool, index) => (
+              <span key={tool?.slug ?? index} className="stack-tile" style={{ '--i': index }}>
+                {tool ? (
+                  <>
+                    <ToolLogo tool={tool} size={96} />
+                    <span className="stack-name">{tool.name}</span>
+                  </>
+                ) : (
+                  <span className="stack-skeleton" />
+                )}
+              </span>
+            ))}
+          </div>
+          <span className="price-chip">
+            <small>Plans from</small> {currency === 'USD' ? '$0' : '₹0'}
+            <small>/mo</small>
+          </span>
+        </div>
+      </section>
+
+      <div className="brand-strip" aria-hidden="true">
+        <div className="brand-track">
           {[0, 1].map((copy) => (
-            <span key={copy} className="marquee-group">
-              {MARQUEE.map((word) => (
-                <span key={word} className="marquee-item">
-                  {word}
-                  <Icon name="spark" size={22} />
+            <span key={copy} className="brand-group">
+              {(trending.length ? trending : [{ slug: 'x', name: 'HandyAI' }]).map((tool) => (
+                <span key={`${copy}-${tool.slug}`} className="brand-name">
+                  {tool.name}
                 </span>
               ))}
             </span>
@@ -89,76 +168,16 @@ export default function Home() {
         </div>
       </div>
 
-      <section className="home-search">
-        <p>
-          Compare {stats?.toolCount ?? 'dozens of'} AI platforms by price, with monthly, quarterly
-          and annual plans side by side.
-        </p>
-        <form className="hero-search" onSubmit={submitSearch} role="search">
-          <Icon name="search" size={20} />
-          <label htmlFor="hero-search" className="sr-only">
-            Search the marketplace
-          </label>
-          <input
-            id="hero-search"
-            type="search"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search tools: video editing, logo, meeting notes…"
-          />
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
-        </form>
-      </section>
-
-      <section className="feature-strip" aria-label="Highlights">
-        <Link to={isAuthenticated ? '/profile' : '/signup'} className="feature-cell">
-          <span>
-            <strong>Start your personalised path</strong> to the right AI stack
-          </span>
-          <span className="feature-link">
-            {isAuthenticated ? 'Set your profession' : 'Create a profile'} <Icon name="external" size={14} />
-          </span>
-        </Link>
-        <Link to="/chat" className="feature-cell">
-          <span className="feature-icon">
-            <Icon name="mic" size={22} />
-          </span>
-          <span>
-            <strong>Just say it.</strong> Ask our AI Chat by voice and get tools picked for the job.
-          </span>
-        </Link>
-        <Link to="/marketplace" className="feature-cell feature-dark">
-          <span className="logo-stack">
-            {showcase.map((tool) => (
-              <ToolLogo key={tool.slug} tool={tool} size={36} />
-            ))}
-          </span>
-          <span>
-            <strong className="feature-big">+{stats?.toolCount ?? 39}</strong>
-            <span className="feature-small">
-              AI tools compared · {stats?.userCount ?? 0} members
-            </span>
-          </span>
-        </Link>
-      </section>
-
       <Message>{error || favorites.error}</Message>
 
-      {isAuthenticated && profession ? (
-        <section className="section">
-          <header className="section-head row">
-            <div>
-              <p className="eyebrow">Picked for you</p>
-              <h2>Top tools for a {profession.toLowerCase()}</h2>
-            </div>
-            <Link to="/profile" className="text-link">
-              Change profession
-            </Link>
+      {isAuthenticated && profession && (
+        <section className="shelf">
+          <header className="shelf-head">
+            <h2>Picked for a {profession.toLowerCase()}</h2>
+            <p>Tools that earn their keep in your kind of work.</p>
           </header>
           {forYou === null ? (
-            <Spinner label="Finding your matches" />
+            <Spinner label="Matching tools to your work" />
           ) : (
             <div className="product-grid">
               {forYou.map((entry) => (
@@ -172,68 +191,24 @@ export default function Home() {
               ))}
             </div>
           )}
-        </section>
-      ) : (
-        <section className="promo-band">
-          <div>
-            <h2>Get picks made for your profession</h2>
-            <p>
-              Tell us what you do, from software developer to chartered accountant, and the
-              marketplace puts the tools that fit your work first.
-            </p>
-          </div>
-          <div className="promo-actions">
-            <Link to="/signup" className="btn btn-primary">
-              Create a free profile
-            </Link>
-            <Link to="/chat" className="btn btn-ghost">
-              Or just ask the chat
+          <div className="shelf-foot">
+            <Link to="/profile" className="btn btn-secondary">
+              Change my profession
             </Link>
           </div>
         </section>
       )}
 
-      <section className="section">
-        <header className="section-head row">
-          <div>
-            <p className="eyebrow">Shop by category</p>
-            <h2>What do you need help with?</h2>
-          </div>
-          <Link to="/categories" className="text-link">
-            All categories
-          </Link>
-        </header>
-        <div className="category-strip">
-          {categories.map((category) => (
-            <Link
-              key={category.slug}
-              to={`/marketplace?category=${category.slug}`}
-              className="category-chip"
-            >
-              <span className={`category-badge cat-${category.slug}`}>
-                <CategoryIcon slug={category.slug} size={20} />
-              </span>
-              {category.name}
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      <section className="section">
-        <header className="section-head row">
-          <div>
-            <p className="eyebrow">Trending</p>
-            <h2>Most popular in the marketplace</h2>
-          </div>
-          <Link to="/marketplace" className="text-link">
-            See all tools
-          </Link>
+      <section className="shelf">
+        <header className="shelf-head">
+          <h2>What everyone&apos;s adding</h2>
+          <p>The tools people open most, this week.</p>
         </header>
         {loading ? (
-          <Spinner label="Loading the marketplace" />
+          <Spinner label="Stocking the shelf" />
         ) : (
           <div className="product-grid">
-            {trending.slice(0, 8).map((tool) => (
+            {trending.slice(0, 4).map((tool) => (
               <ProductCard
                 key={tool.slug}
                 tool={tool}
@@ -243,18 +218,18 @@ export default function Home() {
             ))}
           </div>
         )}
+        <div className="shelf-foot">
+          <Link to="/marketplace" className="btn btn-secondary">
+            View all tools
+          </Link>
+        </div>
       </section>
 
       {freeTools.length > 0 && (
-        <section className="section">
-          <header className="section-head row">
-            <div>
-              <p className="eyebrow">Free to start</p>
-              <h2>Best rated with a free plan</h2>
-            </div>
-            <Link to="/marketplace?freePlan=true" className="text-link">
-              All free tools
-            </Link>
+        <section className="shelf">
+          <header className="shelf-head">
+            <h2>Free to start, hard to quit</h2>
+            <p>The best-rated tools you can try without a card.</p>
           </header>
           <div className="product-grid">
             {freeTools.map((tool) => (
@@ -266,20 +241,77 @@ export default function Home() {
               />
             ))}
           </div>
+          <div className="shelf-foot">
+            <Link to="/marketplace?freePlan=true" className="btn btn-secondary">
+              View all free tools
+            </Link>
+          </div>
         </section>
       )}
 
-      <section className="chat-band">
-        <span className="chat-band-icon">
-          <Icon name="mic" size={28} />
-        </span>
-        <div>
-          <h2>Not sure what to search for?</h2>
-          <p>Tell HandyAI what you are trying to do, out loud or in a sentence, and it picks the tools.</p>
-        </div>
-        <Link to="/chat" className="btn btn-primary">
-          Open AI Chat
-        </Link>
+      {categories.length > 0 && (
+        <section className="aisles">
+          <h2>Shop by the job</h2>
+          <div className="bento">
+            {featuredAisles.map((category, index) => (
+              <Link
+                key={category.slug}
+                to={`/marketplace?category=${category.slug}`}
+                className={`bento-tile ${index === 1 || index === 2 ? 'is-wide' : ''}`}
+              >
+                <span className="bento-name">{category.name}</span>
+                <span className="bento-count">{category.toolCount} tools</span>
+                <span className="bento-icon">
+                  <CategoryIcon slug={category.slug} size={120} />
+                </span>
+                <span className="bento-go">
+                  <Icon name="arrow" size={18} />
+                </span>
+              </Link>
+            ))}
+          </div>
+          <div className="aisle-chips">
+            {otherAisles.map((category) => (
+              <Link key={category.slug} to={`/marketplace?category=${category.slug}`} className="chip">
+                <CategoryIcon slug={category.slug} size={16} /> {category.name}
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section className="steps">
+        <h2>Three moves to a leaner stack</h2>
+        <ol>
+          {STEPS.map((step, index) => (
+            <li key={step.title} className="step">
+              <span className="step-number">{String(index + 1).padStart(2, '0')}</span>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section className="concierge-band">
+        <h2>Can&apos;t name the tool? Name the job.</h2>
+        <form className="concierge-form" onSubmit={askConcierge}>
+          <label htmlFor="concierge-job" className="sr-only">
+            Describe what you want to get done
+          </label>
+          <span className="concierge-input">
+            <Icon name="spark" size={18} />
+            <input
+              id="concierge-job"
+              value={job}
+              onChange={(event) => setJob(event.target.value)}
+              placeholder="e.g. turn my podcast into short clips"
+            />
+          </span>
+          <button type="submit" className="btn btn-dark">
+            Find my tool
+          </button>
+        </form>
       </section>
     </>
   )

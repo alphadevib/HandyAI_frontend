@@ -105,11 +105,11 @@ export default function Login({ mode = 'login' }) {
       <div className="auth-card">
         <header className="auth-head">
           <BrandMark size={44} />
-          <h1>{isSignup ? 'Create your HandyAI profile' : 'Welcome back'}</h1>
+          <h1>{isSignup ? 'Build your AI stack' : 'Your stack missed you'}</h1>
           <p>
             {isSignup
-              ? 'Tell us what you do and the marketplace will lead with the tools that fit.'
-              : 'Sign in to see your picks, saved tools and subscriptions.'}
+              ? 'Tell us what you do. We will put the tools that fit your work on the front shelf.'
+              : 'Sign in for your picks, your saved tools and every renewal date in one place.'}
           </p>
         </header>
 

@@ -81,6 +81,12 @@ const UI_PATHS = {
     'M2 12h2', 'M20 12h2', 'M4.9 19.1l1.4-1.4', 'M17.7 6.3l1.4-1.4',
   ],
   moon: ['M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z'],
+  home: ['M4 11l8-7 8 7', 'M6 9.5V20h12V9.5', 'M10 20v-5h4v5'],
+  arrow: ['M5 12h14', 'M13 6l6 6-6 6'],
+  'chevron-left': ['M15 6l-6 6 6 6'],
+  'chevron-right': ['M9 6l6 6-6 6'],
+  bag: ['M5 8h14l-1.2 12H6.2z', 'M9 8a3 3 0 0 1 6 0'],
+  layers: ['M12 3l9 5-9 5-9-5z', 'M3 13l9 5 9-5'],
 }
 
 export function Icon({ name, size, className, label }) {

@@ -1,8 +1,32 @@
-import { Link } from '../router'
 import { BrandMark, Wordmark } from './Brand'
 import { openSuggestions } from './SuggestionDialog'
+import { Link } from '../router'
 
 /* global __APP_BUILD__ */
+
+const COLUMNS = [
+  {
+    title: 'Shop',
+    links: [
+      ['/marketplace', 'The full shelf'],
+      ['/marketplace?freePlan=true', 'Free to start'],
+      ['/marketplace?sort=rating', 'Best rated'],
+      ['/categories', 'Every aisle'],
+    ],
+  },
+  {
+    title: 'Your account',
+    links: [
+      ['/profile', 'Profile & saved tools'],
+      ['/subscriptions', 'My stack'],
+      ['/signup', 'Join free'],
+    ],
+  },
+  {
+    title: 'Help',
+    links: [['/chat', 'Ask the concierge']],
+  },
+]
 
 export default function Footer() {
   return (
@@ -10,26 +34,36 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-brand">
           <span className="brand">
-            <BrandMark size={30} />
+            <BrandMark size={32} />
             <Wordmark />
           </span>
           <p className="footer-note">
-            The marketplace for AI tools, matched to the work you actually do.
+            The AI tools store that shows its prices. Compare, choose and keep every subscription
+            in check.
           </p>
         </div>
-        <nav className="footer-links" aria-label="Footer">
-          <Link to="/categories">Categories</Link>
-          <Link to="/marketplace">Marketplace</Link>
-          <Link to="/chat">AI Chat</Link>
-          <Link to="/subscriptions">My subscriptions</Link>
-          <button type="button" className="text-link" onClick={openSuggestions}>
-            Suggest a feature
-          </button>
-        </nav>
+        {COLUMNS.map((column) => (
+          <nav key={column.title} className="footer-col" aria-label={column.title}>
+            <h3>{column.title}</h3>
+            {column.links.map(([to, label]) => (
+              <Link key={to} to={to}>
+                {label}
+              </Link>
+            ))}
+            {column.title === 'Help' && (
+              <button type="button" className="footer-link-button" onClick={openSuggestions}>
+                Suggest a feature
+              </button>
+            )}
+          </nav>
+        ))}
       </div>
       <p className="footer-copy">
-        Prices are indicative list prices of each tool&apos;s entry plan; rupee amounts are converted
-        at a fixed rate. Purchases happen on the vendor&apos;s own website. · v{__APP_BUILD__.version}
+        <span>HandyAI © {new Date().getFullYear()} · v{__APP_BUILD__.version}</span>
+        <span>
+          Prices are indicative list prices of each tool&apos;s entry plan; rupee amounts use a fixed
+          rate. You buy on the maker&apos;s own website.
+        </span>
       </p>
     </footer>
   )

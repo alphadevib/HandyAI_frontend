@@ -6,14 +6,15 @@ import ProductCard from '../components/ProductCard'
 import { useAuth } from '../context/AuthContext'
 import { usePrefs } from '../context/PrefsContext'
 import { useFavoriteToggle } from '../hooks'
+import { navigate } from '../router'
 import { randomId } from '../visitor'
 
 const STORAGE_KEY = 'handyai.chat'
 const STARTERS = [
-  'Edit videos for my YouTube channel',
-  'Summarise my meetings automatically',
+  'Cut my YouTube videos faster',
+  'Take notes in my meetings for me',
   "I'm a chartered accountant",
-  'Free tools to design a logo',
+  'A free way to design a logo',
 ]
 
 const SpeechRecognition =
@@ -157,6 +158,17 @@ export default function Chat() {
   }, [])
   const favorites = useFavoriteToggle(applyFavorite)
 
+  const handedOver = useRef(false)
+  useEffect(() => {
+    if (handedOver.current) return
+    handedOver.current = true
+    const question = new URLSearchParams(window.location.search).get('q')
+    if (!question) return
+    navigate('/chat', { replace: true, scroll: false })
+    // After this render settles, so the question goes out like a typed one.
+    Promise.resolve().then(() => send(question))
+  }, [send])
+
   const reset = () => {
     recognition.current?.abort()
     setConversation({ messages: [], context: null })
@@ -169,11 +181,11 @@ export default function Chat() {
     <section className="page chat-page">
       <header className="chat-head">
         <div>
-          <p className="eyebrow">AI Chat</p>
-          <h1>Ask HandyAI</h1>
+          <p className="eyebrow">The concierge</p>
+          <h1>Describe the job. We&apos;ll find the tool.</h1>
           <p className="lede">
-            Say or type what you are trying to do. Refine with “only free ones”, “under ₹1,000 a
-            month” or “I&apos;m a teacher”.
+            Talk to it like a well-read colleague. Narrow things down with “only free ones”, “under
+            ₹1,000 a month” or “I&apos;m a teacher”.
             {user?.profession && ` Answers are tuned for a ${user.profession.toLowerCase()}.`}
           </p>
         </div>
@@ -188,8 +200,8 @@ export default function Chat() {
         {messages.length === 0 && (
           <div className="chat-welcome">
             <BrandMark size={56} />
-            <h2>What do you need an AI tool for?</h2>
-            <p>Tap the microphone and just say it, or pick a starter below.</p>
+            <h2>What are you trying to get done?</h2>
+            <p>Hit the mic and say it out loud, or borrow one of these to start.</p>
           </div>
         )}
 

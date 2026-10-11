@@ -3,19 +3,21 @@
  *
  * Everything is delegated from the document, so new cards and buttons pick the effects up with no
  * per-component wiring:
- *  - cards tilt toward the pointer and a soft spotlight follows it
+ *  - a button's colour bloom starts from the exact point the pointer entered it
+ *  - large and primary buttons lean a few pixels toward the pointer, like a magnet
  *  - buttons and chips get a ripple where they were pressed
- *  - cards, panels and section headings fade up the first time they scroll into view
- *  - the floating navbar condenses once the page scrolls
- *  - page heads get a giant outlined "ghost" of their title's first word behind them
+ *  - listings, panels and section headings fade up the first time they scroll into view
+ *  - the header condenses once the page scrolls
  * People who ask their system for reduced motion get none of the motion.
  */
 
-const TILT_SELECTOR = '.product-card, .category-card, .kpi, .stat-tile, .feature-cell'
-const RIPPLE_SELECTOR = '.btn, .chip, .icon-btn, .mic-btn, .send-btn, .dock-link, .fab'
+const BLOOM_SELECTOR = '.btn'
+const MAGNET_SELECTOR = '.btn-lg, .btn-primary'
+const MAGNET_PULL = 0.22
+const MAGNET_MAX_PX = 8
+const RIPPLE_SELECTOR = '.btn, .chip, .icon-btn, .mic-btn, .send-btn'
 const REVEAL_SELECTOR =
-  '.product-card, .category-card, .section-head, .panel, .kpi, .stat-tile, .sub-row, .feature-cell, .promo-band, .chat-band, .empty-state'
-const MAX_TILT_DEG = 6
+  '.product-card, .category-card, .section-head, .shelf-head, .panel, .kpi, .stat-tile, .sub-row, .bento-tile, .step, .concierge-band, .empty-state'
 
 let installed = false
 
@@ -27,8 +29,8 @@ export function installEffects() {
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
 
   installNavbarState()
-  installGhostHeads()
-  installSpotlightAndTilt(reducedMotion, finePointer)
+  installBloom()
+  installMagnet(reducedMotion, finePointer)
   installRipple(reducedMotion)
   if (!reducedMotion.matches && 'IntersectionObserver' in window) installReveal()
 }
@@ -53,51 +55,49 @@ function installNavbarState() {
   update()
 }
 
-function installGhostHeads() {
-  const label = (head) => {
-    const title = head.querySelector('h1')?.textContent.trim().split(/\s+/)[0]
-    if (title && head.dataset.ghost !== title) head.dataset.ghost = title
-  }
-  const scan = () => document.querySelectorAll('.page-head').forEach(label)
-  scan()
-  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true })
+/** Records where the pointer entered a button, so its fill blooms from that point. */
+function installBloom() {
+  document.addEventListener(
+    'pointerover',
+    (event) => {
+      const button = event.target.closest?.(BLOOM_SELECTOR)
+      if (!button || button.contains(event.relatedTarget)) return
+      const rect = button.getBoundingClientRect()
+      button.style.setProperty('--bx', `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`)
+      button.style.setProperty('--by', `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`)
+    },
+    { passive: true },
+  )
 }
 
-function installSpotlightAndTilt(reducedMotion, finePointer) {
+/** Large and primary buttons drift toward the pointer while it is over them. */
+function installMagnet(reducedMotion, finePointer) {
   let active = null
-
-  const reset = (card) => {
-    card.style.removeProperty('--rx')
-    card.style.removeProperty('--ry')
-    card.classList.remove('is-tilting')
+  const release = () => {
+    if (!active) return
+    active.style.removeProperty('--mgx')
+    active.style.removeProperty('--mgy')
+    active = null
   }
 
   document.addEventListener(
     'pointermove',
     (event) => {
-      if (!finePointer.matches) return
-      const card = event.target.closest?.(TILT_SELECTOR)
-      if (active && active !== card) {
-        reset(active)
-        active = null
-      }
-      if (!card) return
-      active = card
-      const rect = card.getBoundingClientRect()
-      const x = (event.clientX - rect.left) / rect.width
-      const y = (event.clientY - rect.top) / rect.height
-      card.style.setProperty('--mx', `${(x * 100).toFixed(1)}%`)
-      card.style.setProperty('--my', `${(y * 100).toFixed(1)}%`)
-      if (!reducedMotion.matches) {
-        card.style.setProperty('--rx', `${((0.5 - y) * MAX_TILT_DEG).toFixed(2)}deg`)
-        card.style.setProperty('--ry', `${((x - 0.5) * MAX_TILT_DEG).toFixed(2)}deg`)
-        card.classList.add('is-tilting')
-      }
+      if (reducedMotion.matches || !finePointer.matches) return
+      const button = event.target.closest?.(MAGNET_SELECTOR)
+      if (button !== active) release()
+      if (!button || button.disabled) return
+      active = button
+      const rect = button.getBoundingClientRect()
+      const clamp = (value) => Math.max(-MAGNET_MAX_PX, Math.min(MAGNET_MAX_PX, value))
+      const dx = clamp((event.clientX - (rect.left + rect.width / 2)) * MAGNET_PULL)
+      const dy = clamp((event.clientY - (rect.top + rect.height / 2)) * MAGNET_PULL)
+      button.style.setProperty('--mgx', `${dx.toFixed(1)}px`)
+      button.style.setProperty('--mgy', `${dy.toFixed(1)}px`)
     },
     { passive: true },
   )
-
-  document.addEventListener('pointerleave', () => active && reset(active), true)
+  document.addEventListener('pointerleave', release, true)
 }
 
 function installRipple(reducedMotion) {

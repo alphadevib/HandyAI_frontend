@@ -154,11 +154,11 @@ export default function Marketplace() {
   return (
     <section className="page marketplace">
       <header className="page-head">
-        <p className="eyebrow">Marketplace</p>
-        <h1>{activeCategory ? activeCategory.name : 'All AI tools'}</h1>
+        <p className="eyebrow">{activeCategory ? 'Aisle' : 'Shop all'}</p>
+        <h1>{activeCategory ? activeCategory.name : 'The full shelf'}</h1>
         <p className="lede">
           {activeCategory?.description ??
-            'Compare prices across monthly, quarterly and annual plans, then buy straight from the vendor.'}
+            'Every tool, every plan, side by side. Set a budget, pick a billing cycle, then buy straight from the maker.'}
         </p>
       </header>
 
@@ -170,7 +170,7 @@ export default function Marketplace() {
             type="search"
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
-            placeholder="Search by name, task or tag"
+            placeholder="Search the shelf: name, task or tag"
           />
         </label>
 
@@ -212,7 +212,7 @@ export default function Marketplace() {
       <div className="market-layout">
         <aside className={`market-filters ${filtersOpen ? 'is-open' : ''}`} aria-label="Filters">
           <fieldset>
-            <legend>Price per month</legend>
+            <legend>Budget per month</legend>
             <label className="radio-row">
               <input
                 type="radio"
@@ -251,7 +251,7 @@ export default function Marketplace() {
           </fieldset>
 
           <fieldset>
-            <legend>Category</legend>
+            <legend>Aisle</legend>
             <label className="radio-row">
               <input
                 type="radio"
@@ -259,7 +259,7 @@ export default function Marketplace() {
                 checked={!category}
                 onChange={() => setParams({ category: '' })}
               />
-              <span>All categories</span>
+              <span>Every aisle</span>
             </label>
             {categories.map((item) => (
               <label key={item.slug} className="radio-row">
@@ -280,7 +280,7 @@ export default function Marketplace() {
         <div className="market-results">
           <div className="results-bar">
             <p>
-              {loading ? 'Searching…' : `${pageInfo.totalElements} ${pageInfo.totalElements === 1 ? 'tool' : 'tools'}`}
+              {loading ? 'Restocking…' : `Showing ${tools.length} of ${pageInfo.totalElements} ${pageInfo.totalElements === 1 ? 'tool' : 'tools'}`}
               {q && ` for "${q}"`}
             </p>
             {hasFilters && (
@@ -293,11 +293,11 @@ export default function Marketplace() {
           <Message>{error || favorites.error}</Message>
 
           {loading ? (
-            <Spinner label="Loading tools" />
+            <Spinner label="Restocking the shelf" />
           ) : tools.length === 0 ? (
             <div className="empty-state">
-              <h3>No tools match these filters</h3>
-              <p>Try a wider price band, another category, or ask the AI Chat.</p>
+              <h3>Nothing on this shelf — yet</h3>
+              <p>Loosen the budget, try another aisle, or describe the job to the concierge.</p>
               <button type="button" className="btn btn-secondary" onClick={clearAll}>
                 Clear filters
               </button>
@@ -322,7 +322,7 @@ export default function Marketplace() {
                     onClick={loadMore}
                     disabled={loadingMore}
                   >
-                    {loadingMore ? 'Loading…' : 'Show more tools'}
+                    {loadingMore ? 'Restocking…' : 'Load more tools'}
                   </button>
                 </div>
               )}

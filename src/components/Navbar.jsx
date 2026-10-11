@@ -1,30 +1,79 @@
 import { useEffect, useRef, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { usePrefs } from '../context/PrefsContext'
 import { Link, navigate, useRoute } from '../router'
 import { BrandMark, Wordmark } from './Brand'
+import CurrencySwitch from './CurrencySwitch'
 import { Icon } from './Icons'
 import ThemeToggle from './ThemeToggle'
 
-const PRIMARY = [
-  { to: '/categories', label: 'Categories', icon: 'grid' },
-  { to: '/marketplace', label: 'Marketplace', icon: 'store' },
-  { to: '/chat', label: 'AI Chat', icon: 'chat' },
+const TICKER = [
+  { text: 'Thirty-nine AI tools, one honest price tag each.', link: '/marketplace', cta: 'Browse the shelf' },
+  { text: 'Paying monthly out of habit? Flip any listing to annual and compare.', link: '/marketplace?sort=price_asc', cta: 'See prices' },
+  { text: "Can't name the tool? Describe the job instead.", link: '/chat', cta: 'Ask the concierge' },
 ]
+const TICKER_MS = 5000
+const TICKER_KEY = 'handyai.tickerClosed'
 
+function tickerClosed() {
+  try {
+    return sessionStorage.getItem(TICKER_KEY) === '1'
+  } catch {
+    return false
+  }
+}
+
+/** A slim bar of rotating notes above the header; each note slides up into place. */
+function Ticker() {
+  const [index, setIndex] = useState(0)
+  const [closed, setClosed] = useState(tickerClosed)
+
+  useEffect(() => {
+    if (closed) return undefined
+    const timer = setInterval(() => setIndex((value) => (value + 1) % TICKER.length), TICKER_MS)
+    return () => clearInterval(timer)
+  }, [closed])
+
+  if (closed) return null
+  const note = TICKER[index]
+  const close = () => {
+    try {
+      sessionStorage.setItem(TICKER_KEY, '1')
+    } catch {
+      /* it just comes back next time */
+    }
+    setClosed(true)
+  }
+
+  return (
+    <div className="ticker" role="region" aria-label="Announcements">
+      <p key={index} className="ticker-line">
+        {note.text}{' '}
+        <Link to={note.link} className="ticker-link">
+          {note.cta}
+        </Link>
+      </p>
+      <button type="button" className="ticker-close" onClick={close} aria-label="Hide announcements">
+        <Icon name="close" size={14} />
+      </button>
+    </div>
+  )
+}
+
+/**
+ * The storefront header: logo, a wide search and the account. Page navigation lives in the side
+ * rail (see FloatingBars), so the top stays quiet.
+ */
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
-  const { currency, setCurrency } = usePrefs()
   const path = useRoute()
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [query, setQuery] = useState('')
   const [accountOpen, setAccountOpen] = useState(false)
   const [lastPath, setLastPath] = useState(path)
   const accountRef = useRef(null)
 
-  // Neither menu should survive a navigation, including the browser's Back button.
+  // The account menu should not survive a navigation, including the browser's Back button.
   if (lastPath !== path) {
     setLastPath(path)
-    setMenuOpen(false)
     setAccountOpen(false)
   }
 
@@ -42,118 +91,103 @@ export default function Navbar() {
     }
   }, [accountOpen])
 
+  const search = (event) => {
+    event.preventDefault()
+    const text = query.trim()
+    navigate(`/marketplace${text ? `?q=${encodeURIComponent(text)}` : ''}`)
+    setQuery('')
+  }
+
   const signOut = () => {
     logout()
     navigate('/')
   }
 
   return (
-    <header className="navbar">
-      <div className="navbar-inner">
-        <Link to="/" className="brand" aria-label="HandyAI home">
-          <BrandMark size={34} />
-          <Wordmark />
-        </Link>
+    <header className="site-header">
+      <Ticker />
+      <div className="navbar">
+        <div className="navbar-inner">
+          <Link to="/" className="brand" aria-label="HandyAI home">
+            <BrandMark size={34} />
+            <Wordmark />
+          </Link>
 
-        <nav id="primary-navigation" className={`nav-primary ${menuOpen ? 'is-open' : ''}`}>
-          {PRIMARY.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={`nav-link ${path.startsWith(item.to) ? 'is-active' : ''}`}
-              aria-current={path.startsWith(item.to) ? 'page' : undefined}
-            >
-              <Icon name={item.icon} size={18} />
-              {item.label}
-            </Link>
-          ))}
-          {!isAuthenticated && (
-            <div className="nav-drawer-auth">
-              <Link to="/login" className="btn btn-secondary">
-                Sign in
-              </Link>
-              <Link to="/signup" className="btn btn-primary">
-                Join free
-              </Link>
+          <form className="header-search" role="search" onSubmit={search}>
+            <Icon name="search" size={18} />
+            <label htmlFor="header-search" className="sr-only">
+              Search tools
+            </label>
+            <input
+              id="header-search"
+              type="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search tools, tasks or tags…"
+            />
+            <kbd aria-hidden="true">↵</kbd>
+          </form>
+
+          <div className="nav-tools">
+            <div className="header-prefs">
+              <CurrencySwitch />
+              <ThemeToggle />
             </div>
-          )}
-        </nav>
 
-        <div className="nav-tools">
-          <ThemeToggle />
-          <div className="currency-switch" role="group" aria-label="Currency">
-            {['INR', 'USD'].map((code) => (
-              <button
-                key={code}
-                type="button"
-                className={currency === code ? 'is-active' : ''}
-                aria-pressed={currency === code}
-                onClick={() => setCurrency(code)}
-              >
-                <span aria-hidden="true">{code === 'INR' ? '₹' : '$'}</span>
-                <span className="currency-code">{code}</span>
-              </button>
-            ))}
-          </div>
-
-          {isAuthenticated ? (
-            <div className="account" ref={accountRef}>
-              <button
-                type="button"
-                className="account-button"
-                aria-expanded={accountOpen}
-                aria-haspopup="menu"
-                onClick={() => setAccountOpen((open) => !open)}
-              >
-                <span className="avatar" aria-hidden="true">
-                  {(user?.name ?? '?').slice(0, 1).toUpperCase()}
-                </span>
-                <span className="account-name">{user?.name?.split(' ')[0]}</span>
-              </button>
-              {accountOpen && (
-                <div className="account-menu" role="menu">
-                  <p className="account-menu-head">
-                    <strong>{user?.name}</strong>
-                    <span>{user?.organisationName ?? user?.profession ?? user?.email}</span>
-                  </p>
-                  <Link to="/profile" role="menuitem">
-                    <Icon name="user" size={18} /> My profile
-                  </Link>
-                  <Link to="/subscriptions" role="menuitem">
-                    <Icon name="wallet" size={18} /> My subscriptions
-                  </Link>
-                  {isAdmin && (
-                    <Link to="/admin" role="menuitem">
-                      <Icon name="shield" size={18} /> Admin dashboard
-                    </Link>
-                  )}
-                  <button type="button" role="menuitem" onClick={signOut}>
-                    <Icon name="logout" size={18} /> Sign out
+            {isAuthenticated ? (
+              <>
+                <Link to="/subscriptions" className="icon-btn header-icon" title="My stack">
+                  <Icon name="layers" size={19} />
+                  <span className="sr-only">My subscriptions</span>
+                </Link>
+                <div className="account" ref={accountRef}>
+                  <button
+                    type="button"
+                    className="account-button"
+                    aria-expanded={accountOpen}
+                    aria-haspopup="menu"
+                    onClick={() => setAccountOpen((open) => !open)}
+                  >
+                    <span className="avatar" aria-hidden="true">
+                      {(user?.name ?? '?').slice(0, 1).toUpperCase()}
+                    </span>
+                    <span className="account-name">{user?.name?.split(' ')[0]}</span>
                   </button>
+                  {accountOpen && (
+                    <div className="account-menu" role="menu">
+                      <p className="account-menu-head">
+                        <strong>{user?.name}</strong>
+                        <span>{user?.organisationName ?? user?.profession ?? user?.email}</span>
+                      </p>
+                      <Link to="/profile" role="menuitem">
+                        <Icon name="user" size={18} /> Profile &amp; saved tools
+                      </Link>
+                      <Link to="/subscriptions" role="menuitem">
+                        <Icon name="wallet" size={18} /> My stack
+                      </Link>
+                      {isAdmin && (
+                        <Link to="/admin" role="menuitem">
+                          <Icon name="shield" size={18} /> Admin dashboard
+                        </Link>
+                      )}
+                      <button type="button" role="menuitem" onClick={signOut}>
+                        <Icon name="logout" size={18} /> Sign out
+                      </button>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="nav-auth">
-              <Link to="/login" className="btn btn-ghost btn-sm">
-                Sign in
-              </Link>
-              <Link to="/signup" className="btn btn-primary btn-sm">
-                Join free
-              </Link>
-            </div>
-          )}
-
-          <button
-            type="button"
-            className="nav-toggle"
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation"
-            onClick={() => setMenuOpen((open) => !open)}
-          >
-            <span className="sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
-            <span className={`burger ${menuOpen ? 'is-open' : ''}`} aria-hidden="true" />
-          </button>
+              </>
+            ) : (
+              <div className="nav-auth">
+                <Link to="/login" className="btn btn-ghost btn-sm">
+                  Sign in
+                </Link>
+                <Link to="/signup" className="btn btn-primary btn-sm">
+                  Join free
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
