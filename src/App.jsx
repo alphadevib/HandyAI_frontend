@@ -16,6 +16,7 @@ import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
 import Subscriptions from './pages/Subscriptions'
 import ToolDetail from './pages/ToolDetail'
+import VerifyEmail from './pages/VerifyEmail'
 import { usePresence } from './hooks'
 import { matchPath, navigate, useRoute } from './router'
 import { useEffect } from 'react'
@@ -57,6 +58,8 @@ function Routes() {
       return <Login mode="login" />
     case '/signup':
       return <Login mode="signup" />
+    case '/verify-email':
+      return <VerifyEmail />
     case '/profile':
       return (
         <RequireUser notice="Sign in to see your profile.">

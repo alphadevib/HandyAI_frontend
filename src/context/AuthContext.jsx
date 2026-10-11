@@ -40,8 +40,19 @@ export function AuthProvider({ children }) {
     return result.user
   }, [])
 
+  /** Resolves to the user, or to {pendingEmail, emailSent} when the email must be confirmed. */
   const register = useCallback(async (payload) => {
     const result = await api.register(payload)
+    if (result.verificationRequired) {
+      return { pendingEmail: result.pendingEmail, emailSent: result.emailSent }
+    }
+    setToken(result.token)
+    setUser(result.user)
+    return result.user
+  }, [])
+
+  const verifyEmail = useCallback(async (token) => {
+    const result = await api.verifyEmail(token)
     setToken(result.token)
     setUser(result.user)
     return result.user
@@ -65,12 +76,13 @@ export function AuthProvider({ children }) {
       loading,
       login,
       register,
+      verifyEmail,
       updateProfile,
       logout,
       isAuthenticated: Boolean(user),
       isAdmin: user?.role === 'ADMIN',
     }),
-    [user, loading, login, register, updateProfile, logout],
+    [user, loading, login, register, verifyEmail, updateProfile, logout],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

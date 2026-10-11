@@ -5,7 +5,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/(marketplace|categories|chat|login|signup|profile|subscriptions|admin)",
+      "source": "/(marketplace|categories|chat|login|signup|verify-email|profile|subscriptions|admin)",
       "destination": "/index.html"
     },
     {

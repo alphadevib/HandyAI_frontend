@@ -1,3 +1,4 @@
+import { api } from '../api/client'
 import { useEffect, useState } from 'react'
 import { BrandMark } from '../components/Brand'
 import { Icon } from '../components/Icons'
@@ -39,6 +40,8 @@ export default function Login({ mode = 'login' }) {
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  // Set once a sign-up (or a sign-in) is waiting for the email to be confirmed.
+  const [pending, setPending] = useState(null)
   const isOrganisation = isSignup && form.accountType === 'ORGANISATION'
 
   // Someone who is already signed in has no business on this screen. This also runs right after
@@ -68,7 +71,7 @@ export default function Login({ mode = 'login' }) {
     setFieldErrors({})
     try {
       if (isSignup) {
-        await register({
+        const result = await register({
           name: form.name.trim(),
           email: form.email.trim(),
           password: form.password,
@@ -80,10 +83,14 @@ export default function Login({ mode = 'login' }) {
             organisationRegistrationId: form.organisationRegistrationId.trim(),
           }),
         })
+        if (result?.pendingEmail) setPending({ email: result.pendingEmail, sent: result.emailSent })
       } else {
         await login({ email: form.email.trim(), password: form.password })
       }
     } catch (submitError) {
+      if (submitError.code === 'EMAIL_NOT_VERIFIED') {
+        setPending({ email: form.email.trim(), sent: true, fromSignIn: true })
+      }
       setError(submitError.message)
       setFieldErrors(submitError.fieldErrors ?? {})
     } finally {
@@ -99,6 +106,20 @@ export default function Login({ mode = 'login' }) {
 
   const fieldError = (key) =>
     fieldErrors[key] && <small className="field-error">{fieldErrors[key]}</small>
+
+  if (pending) {
+    return (
+      <section className="auth auth-single">
+        <CheckInbox
+          pending={pending}
+          onBack={() => {
+            setPending(null)
+            setError('')
+          }}
+        />
+      </section>
+    )
+  }
 
   return (
     <section className="auth">
@@ -268,7 +289,8 @@ export default function Login({ mode = 'login' }) {
           </button>
         </form>
 
-        {!isSignup && (
+        {/* The demo account only exists in local development. */}
+        {!isSignup && import.meta.env.DEV && (
           <button type="button" className="btn btn-ghost btn-block" onClick={useDemoAccount}>
             Fill in the demo account
           </button>
@@ -326,3 +348,52 @@ export default function Login({ mode = 'login' }) {
     </section>
   )
 }
+
+const RESEND_COOLDOWN_S = 60
+
+/** "Check your inbox", with a resend button that waits a minute between emails. */
+function CheckInbox({ pending, onBack }) {
+  const [cooldown, setCooldown] = useState(pending.fromSignIn ? 0 : RESEND_COOLDOWN_S)
+  const [note, setNote] = useState(
+    pending.sent ? '' : 'We could not send the email just now. Try the button below in a moment.',
+  )
+
+  useEffect(() => {
+    if (cooldown <= 0) return undefined
+    const timer = setTimeout(() => setCooldown((value) => value - 1), 1000)
+    return () => clearTimeout(timer)
+  }, [cooldown])
+
+  const resend = async () => {
+    setCooldown(RESEND_COOLDOWN_S)
+    try {
+      await api.resendVerification(pending.email)
+      setNote('A fresh link is on its way. The old one no longer works.')
+    } catch (error) {
+      setNote(error.message)
+    }
+  }
+
+  return (
+    <div className="auth-card inbox-card">
+      <span className="inbox-icon" aria-hidden="true">
+        <Icon name="send" size={28} />
+      </span>
+      <h1>Check your inbox</h1>
+      <p className="lede">
+        {pending.sent ? 'We sent a confirmation link to ' : 'Your profile is waiting for confirmation at '}
+        <strong>{pending.email}</strong>. Open the link in that email to finish setting up your profile.
+        It works for 24 hours.
+      </p>
+      {note && <p className="message message-info">{note}</p>}
+      <button type="button" className="btn btn-primary btn-lg btn-block" onClick={resend} disabled={cooldown > 0}>
+        {cooldown > 0 ? `Send a new link in ${cooldown}s` : 'Send a new link'}
+      </button>
+      <p className="fine-print center">Nothing after a few minutes? Check spam or promotions.</p>
+      <button type="button" className="btn btn-ghost btn-block" onClick={onBack}>
+        Back
+      </button>
+    </div>
+  )
+}
+

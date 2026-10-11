@@ -3,5 +3,6 @@ Allow: /
 Disallow: /admin
 Disallow: /profile
 Disallow: /subscriptions
+Disallow: /verify-email
 
 Sitemap: https://ib11.vercel.app/sitemap.xml

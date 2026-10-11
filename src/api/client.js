@@ -45,11 +45,12 @@ export function setToken(token) {
 }
 
 export class ApiError extends Error {
-  constructor(message, status, fieldErrors) {
+  constructor(message, status, fieldErrors, code) {
     super(message)
     this.name = 'ApiError'
     this.status = status
     this.fieldErrors = fieldErrors ?? {}
+    this.code = code
   }
 }
 
@@ -108,6 +109,7 @@ async function requestOnce(path, { method = 'GET', body, auth = true, signal } =
       payload?.message ?? `Request failed (${response.status})`,
       response.status,
       payload?.fieldErrors,
+      payload?.code,
     )
   }
   return payload
@@ -146,6 +148,10 @@ export const api = {
   register: (payload) => request('/auth/register', { method: 'POST', body: payload, auth: false }),
   login: (payload) => request('/auth/login', { method: 'POST', body: payload, auth: false }),
   me: () => request('/auth/me'),
+  verifyEmail: (token) =>
+    request('/auth/verify-email', { method: 'POST', body: { token }, auth: false }),
+  resendVerification: (email) =>
+    request('/auth/resend-verification', { method: 'POST', body: { email }, auth: false }),
   /** Ends the session on the server too, so a copied token stops working. */
   logout: () => request('/auth/logout', { method: 'POST' }).catch(() => null),
   updateProfile: (payload) => request('/auth/me', { method: 'PUT', body: payload }),

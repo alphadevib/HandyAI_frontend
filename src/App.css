@@ -4118,3 +4118,58 @@ a.pill:hover {
     width: min(78%, 300px);
   }
 }
+
+/* ---------- Email confirmation ------------------------------------------------------------- */
+
+.inbox-card,
+.verify-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+  animation: rise 0.6s var(--ease-out);
+}
+
+.inbox-card .lede {
+  margin: 0 0 0.5rem;
+}
+
+.inbox-card .lede strong {
+  color: var(--text-strong);
+}
+
+/* The envelope floats in on a lime disc, then keeps a gentle bob. */
+.inbox-icon {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 0 0 10px var(--accent-soft), 0 18px 40px -12px var(--accent-glow);
+  animation:
+    pop 0.6s var(--ease-spring),
+    float 4s ease-in-out 0.6s infinite;
+}
+
+.verify-page {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+}
+
+.verify-card {
+  padding: 2.5rem 1.5rem;
+}
+
+.verify-card h1 {
+  margin-top: 0.75rem;
+}
+
+.auth.auth-single {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+}
