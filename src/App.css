@@ -1101,10 +1101,19 @@ a.pill:hover {
   animation: bob 5s ease-in-out infinite;
 }
 
-/* The ring turns once a minute; each pill counter-turns at the same rate to stay upright. */
+/* The ring turns once a minute; each pill counter-turns by the same angle to stay upright.
+   Both read one animated --orbit-angle, so pills that mount after the ring started (the tools
+   arrive from the API later) are still exactly level. */
+@property --orbit-angle {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+
 .orbit-track {
   position: absolute;
   inset: 0;
+  rotate: var(--orbit-angle);
   animation: orbit-spin 60s linear infinite;
 }
 
@@ -1118,7 +1127,7 @@ a.pill:hover {
 
 .orbit-upright {
   display: block;
-  animation: orbit-spin 60s linear infinite reverse;
+  rotate: calc(-1 * var(--orbit-angle));
 }
 
 .orbit-pill {
@@ -1145,8 +1154,7 @@ a.pill:hover {
    one-turn-a-minute revolution (only the bob and pop-in stop), because the tool names swap
    with each turn. */
 @media (prefers-reduced-motion: reduce) {
-  .orbit-track,
-  .orbit-upright {
+  .orbit-track {
     animation-duration: 60s !important;
     animation-iteration-count: infinite !important;
   }
@@ -1154,7 +1162,7 @@ a.pill:hover {
 
 @keyframes orbit-spin {
   to {
-    rotate: 360deg;
+    --orbit-angle: 360deg;
   }
 }
 
