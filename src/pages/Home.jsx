@@ -5,10 +5,12 @@ import Message from '../components/Message'
 import ProductCard from '../components/ProductCard'
 import Spinner from '../components/Spinner'
 import ToolLogo from '../components/ToolLogo'
-import ToolOrbit from '../components/ToolOrbit'
+import HeroSpotlight from '../components/HeroSpotlight'
 import { useAuth } from '../context/AuthContext'
 import { useFavoriteToggle } from '../hooks'
 import { Link, navigate } from '../router'
+
+const MARQUEE = ['Compare prices', 'Matched to your work', 'Ask by voice', 'Track every plan']
 
 /** The storefront: search, personalised picks, categories and what is popular right now. */
 export default function Home() {
@@ -70,52 +72,44 @@ export default function Home() {
 
   return (
     <>
-      <section className="hero">
-        <div className="hero-copy">
-          <p className="eyebrow">
-            <Icon name="spark" size={16} /> The AI tools marketplace
-          </p>
-          <h1 className="hero-title">
-            <span className="strong">Every AI Tool</span> <span className="thin">your</span>{' '}
-            <span className="thin">work needs,</span> <span className="strong">Matched</span>{' '}
-            <span className="thin">to</span>{' '}
-            <span className="nowrap">
-              <span className="strong accent">You</span>
-              <span className="hero-seal" aria-hidden="true">
-                <Icon name="check" size={18} />
-              </span>
+      <HeroSpotlight tools={trending} />
+
+      <div className="marquee" aria-hidden="true">
+        <div className="marquee-track">
+          {[0, 1].map((copy) => (
+            <span key={copy} className="marquee-group">
+              {MARQUEE.map((word) => (
+                <span key={word} className="marquee-item">
+                  {word}
+                  <Icon name="spark" size={22} />
+                </span>
+              ))}
             </span>
-          </h1>
-
-          <div className="hero-cta">
-            <Link to="/marketplace" className="btn btn-dark btn-lg">
-              Explore now <Icon name="external" size={18} />
-            </Link>
-            <p>
-              Compare {stats?.toolCount ?? 'dozens of'} AI platforms by price, with monthly,
-              quarterly and annual plans side by side.
-            </p>
-          </div>
-
-          <form className="hero-search" onSubmit={submitSearch} role="search">
-            <Icon name="search" size={20} />
-            <label htmlFor="hero-search" className="sr-only">
-              Search the marketplace
-            </label>
-            <input
-              id="hero-search"
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search tools: video editing, logo, meeting notes…"
-            />
-            <button type="submit" className="btn btn-primary">
-              Search
-            </button>
-          </form>
+          ))}
         </div>
+      </div>
 
-        <ToolOrbit tools={trending} />
+      <section className="home-search">
+        <p>
+          Compare {stats?.toolCount ?? 'dozens of'} AI platforms by price, with monthly, quarterly
+          and annual plans side by side.
+        </p>
+        <form className="hero-search" onSubmit={submitSearch} role="search">
+          <Icon name="search" size={20} />
+          <label htmlFor="hero-search" className="sr-only">
+            Search the marketplace
+          </label>
+          <input
+            id="hero-search"
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search tools: video editing, logo, meeting notes…"
+          />
+          <button type="submit" className="btn btn-primary">
+            Search
+          </button>
+        </form>
       </section>
 
       <section className="feature-strip" aria-label="Highlights">

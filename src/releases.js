@@ -8,6 +8,16 @@
  */
 export const RELEASES = [
   {
+    version: '2.1.0',
+    title: 'A brand-new launch look',
+    highlights: [
+      'A bold black, white and red design with big italic headlines',
+      'A home spotlight that shows the trending tools one by one, with live prices',
+      'Pick a tool from the spotlight, or swipe through them on your phone',
+      'Smoother motion everywhere: cards lift, logos tilt and pages slide in',
+    ],
+  },
+  {
     version: '2.0.0',
     title: 'HandyAI 2.0 is here',
     highlights: [

@@ -1,57 +1,60 @@
 /* Design tokens and element defaults. Component styles live in App.css.
-   Two themes, cyan on both: dark (the default) and light, switched by data-theme on <html>.
-   Every colour in App.css comes from these tokens, so a theme is just this block. */
+   The look follows a sneaker-launch layout: near-black, white and one hot red, with heavy
+   extended italic headlines. Two themes, switched by data-theme on <html>: dark (the default)
+   and light. Every colour in App.css comes from these tokens, so a theme is just this block. */
 
 :root {
-  /* Dark: deep navy with a cyan accent. */
-  --bg: #050a10;
-  --bg-glow: radial-gradient(1200px 600px at 85% -10%, rgba(34, 211, 238, 0.13), transparent 60%),
-    radial-gradient(900px 500px at -10% 20%, rgba(14, 116, 144, 0.3), transparent 60%);
-  --surface: #0b131b;
-  --surface-2: #111c26;
-  --surface-3: #182633;
-  --glass: rgba(11, 19, 27, 0.62);
-  --glass-strong: rgba(7, 13, 19, 0.84);
-  --border: rgba(165, 243, 252, 0.08);
-  --border-strong: rgba(165, 243, 252, 0.16);
-  --text: #b3c3cf;
-  --text-strong: #eef7fb;
-  --text-muted: #7a8d9b;
-  --accent: #22d3ee;
-  --accent-strong: #67e8f9;
-  --accent-deep: #0e7490;
-  --accent-soft: rgba(34, 211, 238, 0.12);
-  --accent-glow: rgba(34, 211, 238, 0.35);
-  --accent-contrast: #031219;
-  --headline-thin: rgba(165, 243, 252, 0.6);
-  --ink: #02060a;
-  --ink-text: #eef7fb;
-  --scrim: rgba(2, 6, 10, 0.72);
-  --teal: #5eead4;
-  --teal-soft: rgba(94, 234, 212, 0.13);
+  /* Dark: carbon black with a launch-day red. */
+  --bg: #0a0a0b;
+  --bg-glow: radial-gradient(1100px 560px at 88% -12%, rgba(229, 32, 46, 0.14), transparent 60%),
+    radial-gradient(900px 520px at -12% 30%, rgba(255, 255, 255, 0.035), transparent 60%);
+  --bg-lines: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' fill='none' stroke='%23ffffff' stroke-opacity='.05'%3E%3Cpath d='M-50 820C300 520 620 980 940 640s520-420 760-200'/%3E%3Cpath d='M-80 180c360 140 520-120 860 40s560 420 900 160'/%3E%3C/svg%3E");
+  --surface: #131315;
+  --surface-2: #1b1b1e;
+  --surface-3: #26262a;
+  --glass: rgba(19, 19, 21, 0.66);
+  --glass-strong: rgba(10, 10, 11, 0.86);
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --text: #b9b9bf;
+  --text-strong: #ffffff;
+  --text-muted: #85858d;
+  --accent: #e5202e;
+  --accent-strong: #ff3b48;
+  --accent-deep: #9e0f19;
+  --accent-soft: rgba(229, 32, 46, 0.13);
+  --accent-glow: rgba(229, 32, 46, 0.42);
+  --accent-contrast: #ffffff;
+  --headline-thin: rgba(255, 255, 255, 0.55);
+  --ink: #f5f5f4;
+  --ink-text: #0a0a0b;
+  --scrim: rgba(0, 0, 0, 0.72);
+  --teal: #fca5a5;
+  --teal-soft: rgba(252, 165, 165, 0.12);
   --success: #6ee7b7;
   --success-soft: rgba(110, 231, 183, 0.12);
   --warning: #fbbf24;
   --warning-soft: rgba(251, 191, 36, 0.13);
-  --danger: #fb8a7e;
-  --danger-soft: rgba(251, 138, 126, 0.12);
-  --brand-gradient: linear-gradient(135deg, #0e4a5c 0%, #0891b2 55%, #67e8f9 100%);
-  --hero-gradient: radial-gradient(120% 90% at 80% 20%, rgba(34, 211, 238, 0.2), transparent 55%),
-    radial-gradient(80% 80% at 10% 100%, rgba(14, 116, 144, 0.42), transparent 60%),
-    linear-gradient(160deg, #0b2735 0%, #08151f 55%, #050a10 100%);
+  --danger: #ff7a70;
+  --danger-soft: rgba(255, 122, 112, 0.12);
+  --brand-gradient: linear-gradient(135deg, #6d0a12 0%, #e5202e 55%, #ff6b6b 100%);
+  --hero-gradient: radial-gradient(70% 90% at 50% 45%, rgba(229, 32, 46, 0.16), transparent 60%),
+    linear-gradient(160deg, #19191c 0%, #0f0f11 55%, #0a0a0b 100%);
   --sheen: rgba(255, 255, 255, 0.03);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 24px 60px rgba(0, 0, 0, 0.6);
   --shadow-float: 0 10px 30px rgba(0, 0, 0, 0.45), 0 2px 6px rgba(0, 0, 0, 0.35);
-  --radius-sm: 12px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --max-width: 1240px;
   --nav-height: 72px;
-  --display: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+  --display: 'Archivo', 'Arial Black', 'Segoe UI', system-ui, sans-serif;
   --sans: 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
   --ease-spring: cubic-bezier(0.22, 1.4, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
   color-scheme: dark;
   font-family: var(--sans);
@@ -63,47 +66,46 @@
   -webkit-font-smoothing: antialiased;
 }
 
-/* Light: cool white with the same cyan, a shade deeper so it reads on white. */
+/* Light: warm paper grey with the same red, a shade deeper so it reads on white. The home hero
+   stays a black card in both themes, like the reference. */
 :root[data-theme='light'] {
-  --bg: #f3f8fb;
-  --bg-glow: radial-gradient(1200px 600px at 85% -10%, rgba(6, 182, 212, 0.12), transparent 60%),
-    radial-gradient(900px 500px at -10% 20%, rgba(14, 165, 233, 0.08), transparent 60%);
+  --bg: #f1f1ef;
+  --bg-glow: radial-gradient(1100px 560px at 88% -12%, rgba(229, 32, 46, 0.08), transparent 60%),
+    radial-gradient(900px 520px at -12% 30%, rgba(0, 0, 0, 0.03), transparent 60%);
+  --bg-lines: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='1000' fill='none' stroke='%23e5202e' stroke-opacity='.16'%3E%3Cpath d='M-50 820C300 520 620 980 940 640s520-420 760-200'/%3E%3Cpath d='M-80 180c360 140 520-120 860 40s560 420 900 160'/%3E%3C/svg%3E");
   --surface: #ffffff;
-  --surface-2: #eef5f9;
-  --surface-3: #dfeaf1;
-  --glass: rgba(255, 255, 255, 0.7);
-  --glass-strong: rgba(255, 255, 255, 0.9);
-  --border: rgba(8, 47, 73, 0.09);
-  --border-strong: rgba(8, 47, 73, 0.16);
-  --text: #3a4b58;
-  --text-strong: #0a1a26;
-  --text-muted: #64788a;
-  --accent: #0891b2;
-  --accent-strong: #0e7490;
-  --accent-deep: #155e75;
-  --accent-soft: rgba(8, 145, 178, 0.1);
-  --accent-glow: rgba(8, 145, 178, 0.28);
+  --surface-2: #ececea;
+  --surface-3: #dfdfdb;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-strong: rgba(255, 255, 255, 0.92);
+  --border: rgba(10, 10, 11, 0.08);
+  --border-strong: rgba(10, 10, 11, 0.16);
+  --text: #3d3d43;
+  --text-strong: #0a0a0b;
+  --text-muted: #6b6b73;
+  --accent: #d61c2a;
+  --accent-strong: #b0121e;
+  --accent-deep: #7f0b14;
+  --accent-soft: rgba(214, 28, 42, 0.09);
+  --accent-glow: rgba(214, 28, 42, 0.28);
   --accent-contrast: #ffffff;
-  --headline-thin: rgba(14, 116, 144, 0.72);
-  --ink: #0a1a26;
-  --ink-text: #f3f8fb;
-  --scrim: rgba(10, 26, 38, 0.45);
-  --teal: #0f766e;
-  --teal-soft: rgba(15, 118, 110, 0.1);
+  --headline-thin: rgba(10, 10, 11, 0.55);
+  --ink: #0a0a0b;
+  --ink-text: #f5f5f4;
+  --scrim: rgba(10, 10, 11, 0.45);
+  --teal: #b91c1c;
+  --teal-soft: rgba(185, 28, 28, 0.08);
   --success: #047857;
   --success-soft: rgba(4, 120, 87, 0.1);
   --warning: #b45309;
   --warning-soft: rgba(217, 119, 6, 0.12);
   --danger: #c2410c;
   --danger-soft: rgba(194, 65, 12, 0.1);
-  --hero-gradient: radial-gradient(120% 90% at 80% 20%, rgba(34, 211, 238, 0.25), transparent 55%),
-    radial-gradient(80% 80% at 10% 100%, rgba(125, 211, 252, 0.3), transparent 60%),
-    linear-gradient(160deg, #e6f7fc 0%, #f4fbfe 55%, #ffffff 100%);
   --sheen: rgba(255, 255, 255, 0);
-  --shadow-sm: 0 1px 2px rgba(10, 26, 38, 0.06);
-  --shadow-md: 0 12px 30px rgba(10, 26, 38, 0.08);
-  --shadow-lg: 0 24px 60px rgba(10, 26, 38, 0.14);
-  --shadow-float: 0 10px 28px rgba(10, 26, 38, 0.1), 0 2px 6px rgba(10, 26, 38, 0.06);
+  --shadow-sm: 0 1px 2px rgba(10, 10, 11, 0.06);
+  --shadow-md: 0 12px 30px rgba(10, 10, 11, 0.08);
+  --shadow-lg: 0 24px 60px rgba(10, 10, 11, 0.16);
+  --shadow-float: 0 10px 28px rgba(10, 10, 11, 0.1), 0 2px 6px rgba(10, 10, 11, 0.06);
 
   color-scheme: light;
 }
@@ -129,7 +131,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--bg-glow), var(--bg);
+  background: var(--bg-lines) center / cover no-repeat, var(--bg-glow), var(--bg);
   background-attachment: fixed;
   color: var(--text);
 }
@@ -144,18 +146,27 @@ h2,
 h3 {
   font-family: var(--display);
   color: var(--text-strong);
-  line-height: 1.1;
+  line-height: 1.05;
   margin: 0 0 0.5rem;
-  letter-spacing: -0.022em;
+  letter-spacing: -0.01em;
   font-weight: 700;
 }
 
+/* Page and section headlines: heavy, extended, italic and upper case, like a launch poster. */
+h1,
+h2 {
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 118%;
+  text-transform: uppercase;
+}
+
 h1 {
-  font-size: clamp(2.1rem, 5.5vw, 3.4rem);
+  font-size: clamp(2rem, 5.5vw, 3.4rem);
 }
 
 h2 {
-  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
 }
 
 h3 {

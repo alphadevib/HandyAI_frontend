@@ -7,6 +7,7 @@
  *  - buttons and chips get a ripple where they were pressed
  *  - cards, panels and section headings fade up the first time they scroll into view
  *  - the floating navbar condenses once the page scrolls
+ *  - page heads get a giant outlined "ghost" of their title's first word behind them
  * People who ask their system for reduced motion get none of the motion.
  */
 
@@ -26,6 +27,7 @@ export function installEffects() {
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)')
 
   installNavbarState()
+  installGhostHeads()
   installSpotlightAndTilt(reducedMotion, finePointer)
   installRipple(reducedMotion)
   if (!reducedMotion.matches && 'IntersectionObserver' in window) installReveal()
@@ -49,6 +51,16 @@ function installNavbarState() {
     { passive: true },
   )
   update()
+}
+
+function installGhostHeads() {
+  const label = (head) => {
+    const title = head.querySelector('h1')?.textContent.trim().split(/\s+/)[0]
+    if (title && head.dataset.ghost !== title) head.dataset.ghost = title
+  }
+  const scan = () => document.querySelectorAll('.page-head').forEach(label)
+  scan()
+  new MutationObserver(scan).observe(document.body, { childList: true, subtree: true })
 }
 
 function installSpotlightAndTilt(reducedMotion, finePointer) {

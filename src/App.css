@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: clip;
 }
 
 main {
@@ -26,7 +27,7 @@ main {
   }
 }
 
-/* ---------- Buttons: floating pills ------------------------------------------------------ */
+/* ---------- Buttons: squared, upper-case launch labels --------------------------------------- */
 
 .btn {
   position: relative;
@@ -36,13 +37,14 @@ main {
   align-items: center;
   justify-content: center;
   gap: 0.45rem;
-  padding: 0.6rem 1.15rem;
-  border-radius: 999px;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius-xs);
   border: 1px solid transparent;
   background: transparent;
-  font-weight: 600;
-  font-size: 0.95rem;
-  letter-spacing: 0.005em;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
   cursor: pointer;
   text-decoration: none;
   min-height: 44px;
@@ -89,13 +91,13 @@ main {
 .btn-sm {
   min-height: 36px;
   padding: 0.4rem 0.9rem;
-  font-size: 0.875rem;
+  font-size: 0.72rem;
 }
 
 .btn-lg {
   min-height: 52px;
-  padding: 0.8rem 1.5rem;
-  font-size: 1rem;
+  padding: 0.8rem 1.75rem;
+  font-size: 0.85rem;
 }
 
 .btn-block {
@@ -121,14 +123,15 @@ main {
 }
 
 .btn-dark:hover {
+  background: var(--accent);
   border-color: var(--accent);
+  color: var(--accent-contrast);
   box-shadow: var(--shadow-float), 0 0 24px -4px var(--accent-glow);
 }
 
 .btn-secondary {
-  background: var(--glass);
-  backdrop-filter: blur(10px);
-  border-color: var(--border-strong);
+  background: transparent;
+  border-color: color-mix(in srgb, var(--text-strong) 45%, transparent);
   color: var(--text-strong);
   box-shadow: var(--shadow-float);
 }
@@ -278,9 +281,9 @@ a.pill:hover {
   align-items: center;
   gap: 0.4rem;
   margin: 0 0 0.6rem;
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.16em;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--accent);
 }
@@ -376,7 +379,7 @@ a.pill:hover {
   display: flex;
   align-items: center;
   gap: 1rem;
-  border-radius: 999px;
+  border-radius: var(--radius-lg);
   background: var(--glass);
   backdrop-filter: saturate(150%) blur(18px);
   -webkit-backdrop-filter: saturate(150%) blur(18px);
@@ -448,24 +451,44 @@ a.pill:hover {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.55rem 0.95rem;
-  border-radius: 999px;
+  padding: 0.65rem 0.95rem;
+  border-radius: var(--radius-sm);
   color: var(--text);
-  font-weight: 500;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   text-decoration: none;
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0.95rem;
+  right: calc(0.95rem + 0.18em);
+  bottom: 0.3rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.35s var(--ease-out);
+}
+
 .nav-link:hover {
   color: var(--text-strong);
-  background: var(--surface-2);
   text-decoration: none;
 }
 
+.nav-link:hover::after,
+.nav-link.is-active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
 .nav-link.is-active {
-  color: var(--accent-contrast);
-  background: var(--accent);
-  box-shadow: 0 6px 20px -6px var(--accent-glow);
+  color: var(--text-strong);
 }
 
 .nav-tools {
@@ -681,6 +704,10 @@ a.pill:hover {
     margin-left: 0;
   }
 
+  .nav-primary .nav-link svg {
+    display: none;
+  }
+
   .nav-auth {
     display: flex;
   }
@@ -875,7 +902,38 @@ a.pill:hover {
 }
 
 .page-head {
+  position: relative;
+  isolation: isolate;
   margin-bottom: 1.75rem;
+}
+
+.page-head[data-ghost]::before {
+  content: attr(data-ghost);
+  position: absolute;
+  z-index: -1;
+  left: -0.4rem;
+  top: 50%;
+  translate: 0 -55%;
+  font-family: var(--display);
+  font-size: clamp(4rem, 15vw, 10.5rem);
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 125%;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--border);
+  pointer-events: none;
+  user-select: none;
+  animation: ghost-in 1.2s var(--ease-out) backwards;
+}
+
+@keyframes ghost-in {
+  from {
+    opacity: 0;
+    translate: 6% -55%;
+  }
 }
 
 .page-head.row,
@@ -927,104 +985,761 @@ a.pill:hover {
     translate 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0ms);
 }
 
-/* ---------- Hero ----------------------------------------------------------------------------- */
+/* ---------- Hero: launch-style spotlight ------------------------------------------------- */
 
-.hero {
+/* A black card in both themes, like the reference: the tool's name in giant split type, its tile
+   floating over the middle of the name, price on the right, picker, pager and progress line.
+   --px/--py (-1..1) come from the pointer and drive the parallax. */
+.spotlight {
+  --spot-autoplay: 6.5s;
+  --spot-red: #e5202e;
+  --spot-white: #ffffff;
+  --spot-muted: rgba(255, 255, 255, 0.62);
+  --px: 0;
+  --py: 0;
   position: relative;
   overflow: hidden;
+  isolation: isolate;
+  container-type: inline-size;
   display: grid;
-  gap: 2rem;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'heading' 'kicker' 'title' 'product' 'sub' 'price' 'actions' 'picker' 'why';
+  justify-items: center;
+  gap: 1rem;
   margin-top: 1.25rem;
-  padding: 2.5rem 1.5rem;
-  border-radius: 32px;
-  background: var(--hero-gradient);
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-lg);
+  padding: 1.75rem 1.25rem 2.5rem;
+  border-radius: 28px;
+  color: var(--spot-muted);
+  text-align: center;
+  background:
+    radial-gradient(55% 70% at 50% 46%, rgba(229, 32, 46, 0.2), transparent 62%),
+    linear-gradient(160deg, #1b1b1e 0%, #0f0f11 55%, #08080a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.65);
 }
 
-/* Fine grain over the gradient, like the photo texture in a print layout. */
-.hero::before {
-  content: '';
+.spot-stage {
+  display: contents;
+}
+
+.spot-ghost {
   position: absolute;
-  inset: 0;
-  opacity: 0.18;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
-
-.hero-copy {
-  position: relative;
-  z-index: 1;
-}
-
-.hero-title {
-  font-size: clamp(2.4rem, 6.4vw, 4.75rem);
-  line-height: 0.98;
-  letter-spacing: -0.045em;
-  margin-bottom: 1.5rem;
-}
-
-.hero-title .nowrap {
+  z-index: -1;
+  left: 50%;
+  top: 52%;
+  translate: -50% -50%;
+  transform: translate(calc(var(--px) * 24px), calc(var(--py) * 14px));
+  transition: transform 0.6s var(--ease-out);
+  font-family: var(--display);
+  font-size: clamp(4.5rem, 25cqi, 19rem);
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 125%;
+  line-height: 1;
+  text-transform: uppercase;
   white-space: nowrap;
+  color: rgba(255, 255, 255, 0.025);
+  -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.07);
+  pointer-events: none;
+  user-select: none;
+  animation: ghost-drift 16s ease-in-out infinite alternate;
 }
 
-.hero-title .strong {
-  font-weight: 600;
-  color: var(--text-strong);
-}
+@keyframes ghost-drift {
+  from {
+    left: 47%;
+  }
 
-.hero-title .thin {
-  font-weight: 200;
-  color: var(--headline-thin);
-}
-
-.hero-title .accent {
-  color: var(--accent);
-  text-shadow: 0 0 40px var(--accent-glow);
-}
-
-.hero-seal {
-  display: inline-grid;
-  place-items: center;
-  width: 0.62em;
-  height: 0.62em;
-  margin-left: 0.18em;
-  vertical-align: middle;
-  border-radius: 50%;
-  border: 1px solid var(--border-strong);
-  background: var(--glass);
-  color: var(--accent);
-  animation: seal-spin 12s linear infinite;
-}
-
-.hero-seal svg {
-  width: 45%;
-  height: 45%;
-  animation: seal-spin 12s linear infinite reverse;
-}
-
-@keyframes seal-spin {
   to {
-    transform: rotate(360deg);
+    left: 53%;
   }
 }
 
-.hero-cta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1rem 1.5rem;
-  margin-bottom: 1.5rem;
+.spot-lines {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 1.2;
+  transform: translate(calc(var(--px) * -10px), calc(var(--py) * -6px));
+  transition: transform 0.6s var(--ease-out);
+  pointer-events: none;
 }
 
-.hero-cta p {
+.spot-lines path {
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: spot-draw 2.6s var(--ease-out) forwards;
+}
+
+.spot-lines path:nth-child(2) {
+  stroke: rgba(229, 32, 46, 0.45);
+  animation-delay: 0.3s;
+}
+
+.spot-lines path:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes spot-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.spot-heading {
+  grid-area: heading;
   margin: 0;
-  max-width: 34ch;
-  font-size: 0.92rem;
-  font-weight: 300;
-  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  font-weight: 600;
+  font-style: normal;
+  font-stretch: 100%;
+  letter-spacing: 0.3em;
+  color: var(--spot-muted);
+}
+
+.spot-heading span {
+  color: var(--spot-white);
+}
+
+.spot-kicker {
+  grid-area: kicker;
+  margin: 0;
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 800;
+  font-style: italic;
+  font-stretch: 115%;
+  letter-spacing: 0.04em;
+  color: var(--spot-red);
+  animation: spot-rise 0.8s var(--ease-out) 0.1s backwards;
+}
+
+.spot-kicker span {
+  margin-left: 0.35rem;
+  color: var(--spot-white);
+  text-transform: uppercase;
+}
+
+.spot-title {
+  grid-area: title;
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  max-width: 100%;
+  font-family: var(--display);
+  font-size: clamp(1.7rem, calc(118cqi / var(--len)), 10rem);
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 125%;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.spot-left {
+  color: var(--spot-red);
+  text-shadow: 0 0 50px rgba(229, 32, 46, 0.45);
+}
+
+.spot-right {
+  color: var(--spot-white);
+}
+
+.spot-letter {
+  display: inline-block;
+  animation: spot-letter 0.85s var(--ease-out) backwards;
+  animation-delay: calc(var(--i) * 42ms + 60ms);
+}
+
+@keyframes spot-letter {
+  from {
+    opacity: 0;
+    transform: translateY(55%) skewX(-14deg);
+    filter: blur(8px);
+  }
+}
+
+.spot-sub {
+  grid-area: sub;
+  margin: 0;
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.5em;
+  color: var(--spot-white);
+  animation: spot-rise 0.8s var(--ease-out) 0.35s backwards;
+}
+
+/* The product: glow disc, floating tile, ground shadow. */
+.spot-product {
+  grid-area: product;
+  position: relative;
+  z-index: 2;
+  width: clamp(160px, 46cqi, 250px);
+  aspect-ratio: 1;
+  margin-block: 0.75rem 1.5rem;
+  transform: translate(calc(var(--px) * -16px), calc(var(--py) * -12px));
+  transition: transform 0.5s var(--ease-out);
+}
+
+.spot-disc {
+  position: absolute;
+  inset: -22%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(229, 32, 46, 0.55) 0%, rgba(229, 32, 46, 0.14) 42%, transparent 68%);
+  animation: disc-pulse 4.5s ease-in-out infinite;
+}
+
+.spot-disc::after {
+  content: '';
+  position: absolute;
+  inset: 16%;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  animation: spin 28s linear infinite;
+}
+
+@keyframes disc-pulse {
+  50% {
+    scale: 1.08;
+    opacity: 0.8;
+  }
+}
+
+.spot-float {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  animation: spot-float 5s ease-in-out infinite;
+}
+
+@keyframes spot-float {
+  50% {
+    translate: 0 -14px;
+    rotate: 2deg;
+  }
+}
+
+.spot-tile {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 26%;
+  background: linear-gradient(145deg, #ffffff 0%, #efefef 55%, #d6d6d6 100%);
+  box-shadow:
+    inset 0 2px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -12px 26px rgba(0, 0, 0, 0.14),
+    0 34px 60px -18px rgba(0, 0, 0, 0.85),
+    0 0 60px -10px rgba(229, 32, 46, 0.55);
+  transform: perspective(900px) rotate(-14deg) rotateY(calc(var(--px) * 16deg)) rotateX(calc(var(--py) * -12deg));
+  transition: transform 0.5s var(--ease-out);
+  animation: spot-tile-in 1.05s var(--ease-out) backwards;
+}
+
+/* A band of light passes over the tile every few seconds. */
+.spot-tile::after {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.75) 50%, transparent 60%);
+  translate: -60% 0;
+  animation: tile-sheen 4.5s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+
+@keyframes tile-sheen {
+  0% {
+    translate: -60% 0;
+  }
+
+  35%,
+  100% {
+    translate: 60% 0;
+  }
+}
+
+@keyframes spot-tile-in {
+  from {
+    opacity: 0;
+    transform: perspective(900px) translate(45%, -22%) rotate(30deg) scale(0.5);
+    filter: blur(10px);
+  }
+}
+
+.spot-tile .tool-logo {
+  width: 56% !important;
+  height: 56% !important;
+  border-radius: 24%;
+  overflow: hidden;
+  box-shadow: 0 10px 24px -10px rgba(0, 0, 0, 0.45);
+}
+
+.spot-tile .tool-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.spot-tile .tool-logo-monogram {
+  font-size: 3.4rem;
+}
+
+.spot-shadow {
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: -18%;
+  height: 12%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.8), transparent 70%);
+  animation: shadow-breathe 5s ease-in-out infinite;
+}
+
+@keyframes shadow-breathe {
+  50% {
+    scale: 0.82;
+    opacity: 0.65;
+  }
+}
+
+.spot-price {
+  grid-area: price;
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-areas: 'tag tag' 'amount name';
+  align-items: center;
+  justify-items: start;
+  gap: 0.35rem 1rem;
+  text-align: left;
+  animation: spot-rise 0.8s var(--ease-out) 0.45s backwards;
+}
+
+.spot-tag {
+  grid-area: tag;
+  justify-self: end;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  background: var(--spot-red);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.spot-amount {
+  grid-area: amount;
+  display: flex;
+  align-items: baseline;
+  gap: 0.2rem;
+  margin: 0;
+}
+
+.spot-amount strong {
+  font-family: var(--display);
+  font-size: clamp(2rem, 6cqi, 3.1rem);
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 112%;
+  line-height: 1;
+  color: var(--spot-red);
+  font-variant-numeric: tabular-nums;
+}
+
+.spot-amount span {
+  color: var(--spot-white);
+  font-weight: 600;
+}
+
+.spot-name {
+  grid-area: name;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  font-family: var(--display);
+  font-size: 0.98rem;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.15;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--spot-white);
+}
+
+.spot-name span + span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--spot-muted);
+}
+
+.spot-actions {
+  grid-area: actions;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.spot-btn-solid {
+  background: #fff;
+  border-color: #fff;
+  color: #0a0a0b;
+}
+
+.spot-btn-solid:hover {
+  background: var(--spot-red);
+  border-color: var(--spot-red);
+  color: #fff;
+  box-shadow: 0 14px 34px -10px rgba(229, 32, 46, 0.7);
+}
+
+.spot-btn-outline {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+}
+
+.spot-btn-outline:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.spot-picker {
+  grid-area: picker;
+  display: grid;
+  gap: 0.6rem;
+  justify-items: inherit;
+}
+
+.spot-picker-label,
+.spot-why h3 {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-style: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--spot-white);
+}
+
+.spot-picker-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.spot-pick {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition:
+    transform 0.35s var(--ease-spring),
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.spot-pick:hover {
+  transform: translateY(-4px) rotate(-6deg);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.spot-pick.is-active {
+  border-color: var(--spot-red);
+  background: rgba(229, 32, 46, 0.16);
+  box-shadow: 0 0 0 3px rgba(229, 32, 46, 0.25), 0 10px 24px -10px rgba(229, 32, 46, 0.7);
+}
+
+.spot-pick .tool-logo {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.spot-why {
+  grid-area: why;
+  max-width: 36ch;
+  animation: spot-rise 0.8s var(--ease-out) 0.55s backwards;
+}
+
+.spot-why h3 {
+  margin-bottom: 0.45rem;
+}
+
+.spot-why p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--spot-muted);
+}
+
+.spot-dots {
+  display: none;
+}
+
+.spot-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.spot-progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--spot-red), #ff6b6b);
+  transform-origin: left;
+  animation: spot-progress var(--spot-autoplay) linear forwards;
+}
+
+.spot-progress span.is-paused {
+  animation-play-state: paused;
+}
+
+@keyframes spot-progress {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes spot-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+.spotlight.is-loading {
+  min-height: 420px;
+  place-items: center;
+}
+
+.spot-skeleton {
+  width: clamp(160px, 30cqi, 240px);
+  aspect-ratio: 1;
+  border-radius: 26%;
+  background: linear-gradient(110deg, #1d1d20 30%, #2a2a2e 50%, #1d1d20 70%) 0 0 / 300% 100%;
+  rotate: -14deg;
+  animation: skeleton 1.4s linear infinite;
+}
+
+@keyframes skeleton {
+  to {
+    background-position: -150% 0;
+  }
+}
+
+@keyframes bob {
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .spot-sub {
+    letter-spacing: 0.26em;
+  }
+
+  .spot-actions .btn-lg {
+    min-height: 48px;
+    padding-inline: 1.1rem;
+    font-size: 0.74rem;
+  }
+}
+
+@media (min-width: 960px) {
+  .spotlight {
+    grid-template-columns: 1fr 1.15fr 1fr;
+    grid-template-rows: auto 1fr auto auto;
+    grid-template-areas:
+      'heading heading kicker'
+      'title title title'
+      'sub . price'
+      'picker actions why';
+    justify-items: stretch;
+    gap: 1.25rem 2rem;
+    min-height: 640px;
+    padding: 2.25rem 4.75rem 2.75rem 3rem;
+    text-align: left;
+  }
+
+  .spot-heading {
+    justify-self: start;
+  }
+
+  .spot-kicker {
+    justify-self: end;
+  }
+
+  .spot-title {
+    align-self: center;
+    justify-self: center;
+    padding-block: 2.5rem;
+  }
+
+  .spot-product {
+    position: absolute;
+    left: 50%;
+    top: 47%;
+    width: clamp(200px, 23cqi, 290px);
+    margin: 0;
+    translate: -50% -50%;
+  }
+
+  .spot-sub {
+    align-self: start;
+  }
+
+  .spot-price {
+    align-self: start;
+    justify-self: end;
+  }
+
+  .spot-picker {
+    align-self: end;
+    justify-items: start;
+  }
+
+  .spot-actions {
+    align-self: end;
+    flex-wrap: nowrap;
+  }
+
+  .spot-actions .btn-lg {
+    padding-inline: 1.35rem;
+  }
+
+  .spot-why {
+    align-self: end;
+    justify-self: end;
+  }
+
+  .spot-dots {
+    position: absolute;
+    right: 1.75rem;
+    top: 50%;
+    translate: 0 -50%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .spot-dots button {
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: height 0.45s var(--ease-spring), background-color 0.2s ease;
+  }
+
+  .spot-dots button:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .spot-dots button.is-active {
+    height: 28px;
+    background: #fff;
+  }
+}
+
+/* ---------- Marquee and search under the hero --------------------------------------------- */
+
+.marquee {
+  overflow: hidden;
+  margin-top: 1.25rem;
+  padding: 0.9rem 0;
+  border-block: 1px solid var(--border);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+}
+
+.marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+  font-family: var(--display);
+  font-size: clamp(1.5rem, 4vw, 2.6rem);
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 125%;
+  line-height: 1.1;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--text-strong);
+}
+
+.marquee-item:nth-child(even) {
+  color: var(--text-strong);
+  -webkit-text-stroke: 0;
+}
+
+.marquee-item svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.home-search {
+  display: grid;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.home-search p {
+  margin: 0;
+  max-width: 46ch;
+  color: var(--text-muted);
+}
+
+@media (min-width: 900px) {
+  .home-search {
+    grid-template-columns: 1fr 1.5fr;
+    gap: 2rem;
+  }
 }
 
 .hero-search {
@@ -1032,13 +1747,11 @@ a.pill:hover {
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.4rem 0.4rem 1.1rem;
-  background: var(--glass-strong);
-  backdrop-filter: blur(12px);
+  background: var(--surface);
   border: 1px solid var(--border-strong);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   box-shadow: var(--shadow-float);
   color: var(--text-muted);
-  max-width: 600px;
   transition: border-color 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -1065,141 +1778,6 @@ a.pill:hover {
 .field input::placeholder,
 .field textarea::placeholder {
   color: var(--text-muted);
-}
-
-/* Logos orbiting the HandyAI mark. */
-.hero-orbit {
-  position: relative;
-  z-index: 1;
-  aspect-ratio: 1;
-  width: min(100%, 440px);
-  margin: 0 auto;
-}
-
-.orbit-ring {
-  position: absolute;
-  inset: 12%;
-  border-radius: 50%;
-  border: 1px dashed color-mix(in srgb, var(--accent) 18%, transparent);
-  animation: seal-spin 60s linear infinite;
-}
-
-.orbit-ring-2 {
-  inset: 30%;
-  border-style: solid;
-  border-color: color-mix(in srgb, var(--accent) 8%, transparent);
-  animation-direction: reverse;
-  animation-duration: 40s;
-}
-
-.orbit-core {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  translate: -50% -50%;
-  filter: drop-shadow(0 0 40px color-mix(in srgb, var(--accent) 45%, transparent));
-  animation: bob 5s ease-in-out infinite;
-}
-
-/* The ring turns once a minute; each pill counter-turns by the same angle to stay upright.
-   Both read one animated --orbit-angle, so pills that mount after the ring started (the tools
-   arrive from the API later) are still exactly level. */
-@property --orbit-angle {
-  syntax: '<angle>';
-  inherits: true;
-  initial-value: 0deg;
-}
-
-.orbit-track {
-  position: absolute;
-  inset: 0;
-  rotate: var(--orbit-angle);
-  animation: orbit-spin 60s linear infinite;
-}
-
-.orbit-tile {
-  --angle: calc(360deg / var(--n) * var(--i) - 90deg);
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%) rotate(var(--angle)) translateX(min(38vw, 190px)) rotate(calc(-1 * var(--angle)));
-}
-
-.orbit-upright {
-  display: block;
-  rotate: calc(-1 * var(--orbit-angle));
-}
-
-.orbit-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
-  border-radius: 999px;
-  background: var(--glass-strong);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-strong);
-  box-shadow: var(--shadow-float);
-  color: var(--text-strong);
-  font-size: 0.82rem;
-  font-weight: 600;
-  white-space: nowrap;
-  animation:
-    orbit-pop 0.7s var(--ease-spring) both,
-    bob 6s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 70ms), calc(var(--i) * -0.7s);
-}
-
-/* "Reduce motion" stops every other animation on the site, but the ring keeps its slow
-   one-turn-a-minute revolution (only the bob and pop-in stop), because the tool names swap
-   with each turn. */
-@media (prefers-reduced-motion: reduce) {
-  .orbit-track {
-    animation-duration: 60s !important;
-    animation-iteration-count: infinite !important;
-  }
-}
-
-@keyframes orbit-spin {
-  to {
-    --orbit-angle: 360deg;
-  }
-}
-
-@keyframes orbit-pop {
-  from {
-    opacity: 0;
-    scale: 0.4;
-    filter: blur(6px);
-  }
-}
-
-.orbit-tile .tool-logo {
-  border-radius: 50%;
-}
-
-.orbit-name {
-  display: none;
-}
-
-@keyframes bob {
-  50% {
-    translate: 0 -8px;
-  }
-}
-
-@media (min-width: 600px) {
-  .orbit-name {
-    display: inline;
-  }
-}
-
-@media (min-width: 960px) {
-  .hero {
-    grid-template-columns: 1.3fr 1fr;
-    padding: 3.5rem 3rem;
-    min-height: 560px;
-  }
 }
 
 /* ---------- Feature strip under the hero (three cells, like the reference) ------------------ */
@@ -1535,8 +2113,39 @@ a.pill:hover {
 
 .product-card:hover,
 .category-card:hover {
-  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
-  box-shadow: 0 24px 50px -20px rgba(0, 0, 0, 0.8), 0 0 0 1px color-mix(in srgb, var(--accent) 8%, transparent);
+  translate: 0 -4px;
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 28px 50px -22px rgba(0, 0, 0, 0.8), 0 0 40px -18px var(--accent-glow);
+}
+
+.product-card,
+.category-card {
+  transition:
+    transform 0.5s var(--ease-spring),
+    translate 0.4s var(--ease-out),
+    border-color 0.25s ease,
+    box-shadow 0.3s ease;
+}
+
+.product-card::after,
+.category-card::after {
+  content: '';
+  position: absolute;
+  left: 1.15rem;
+  right: 1.15rem;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), #ff6b6b);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--ease-out);
+  pointer-events: none;
+}
+
+.product-card:hover::after,
+.category-card:hover::after {
+  transform: scaleX(1);
 }
 
 /* ---------- Tool logos & product cards ----------------------------------------------------- */
@@ -1587,7 +2196,8 @@ a.pill:hover {
 }
 
 .product-card:hover .product-head .tool-logo {
-  transform: scale(1.08) rotate(-4deg);
+  transform: scale(1.14) rotate(-10deg) translateY(-2px);
+  box-shadow: 0 12px 24px -10px var(--accent-glow);
 }
 
 .product-title {
@@ -1676,8 +2286,10 @@ a.pill:hover {
 
 .product-price strong {
   font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 900;
+  font-style: italic;
+  font-stretch: 112%;
   color: var(--text-strong);
 }
 
