@@ -59,6 +59,15 @@ async function request(path, { method = 'GET', body, auth = true, signal } = {})
   const text = await response.text()
   const payload = text ? safeParse(text) : null
 
+  // A page instead of JSON means the request never reached the API: on Vercel, an unset
+  // VITE_API_BASE_URL sends /api to the site itself, which answers with index.html.
+  if (text && payload === null) {
+    throw new ApiError(
+      'The HandyAI server could not be reached. Check that VITE_API_BASE_URL points at the backend.',
+      response.status,
+    )
+  }
+
   if (!response.ok) {
     if (response.status === 401) setToken(null)
     throw new ApiError(

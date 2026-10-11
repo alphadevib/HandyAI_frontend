@@ -3400,3 +3400,18 @@ a.pill:hover {
   text-align: center;
   padding: 5rem 1rem;
 }
+
+/* Shown by ErrorBoundary when a page crashes, instead of a blank screen. */
+.app-crash {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1rem;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.app-crash h1 {
+  color: var(--text-strong);
+}
