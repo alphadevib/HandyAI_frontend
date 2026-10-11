@@ -8,6 +8,25 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '/api'
 const TOKEN_KEY = 'handyai.token'
 
+/** Shown when the server cannot be reached even after retrying. */
+export const OFFLINE_MESSAGE =
+  'HandyAI is waking up or briefly offline. Give it a few seconds and try again.'
+
+/**
+ * Reads are retried while the server wakes up or restarts (it answers 502/503/504, an HTML error
+ * page, or nothing at all for a short while). Writes are never retried, so nothing is sent twice.
+ */
+export const RETRY_DELAYS_MS = [1500, 3000, 6000]
+const RETRYABLE_STATUS = new Set([502, 503, 504])
+const sleep = (ms, signal) =>
+  new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms)
+    signal?.addEventListener('abort', () => {
+      clearTimeout(timer)
+      reject(new DOMException('Aborted', 'AbortError'))
+    })
+  })
+
 export function getToken() {
   try {
     return localStorage.getItem(TOKEN_KEY)
@@ -34,7 +53,25 @@ export class ApiError extends Error {
   }
 }
 
-async function request(path, { method = 'GET', body, auth = true, signal } = {}) {
+async function request(path, options = {}) {
+  const retries = (options.method ?? 'GET') === 'GET' ? RETRY_DELAYS_MS : []
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await requestOnce(path, options)
+    } catch (error) {
+      if (!error.retryable || attempt >= retries.length) throw error
+      await sleep(retries[attempt], options.signal)
+    }
+  }
+}
+
+function offline(status) {
+  const error = new ApiError(OFFLINE_MESSAGE, status)
+  error.retryable = true
+  return error
+}
+
+async function requestOnce(path, { method = 'GET', body, auth = true, signal } = {}) {
   const headers = { Accept: 'application/json' }
   if (body !== undefined) headers['Content-Type'] = 'application/json'
 
@@ -51,7 +88,7 @@ async function request(path, { method = 'GET', body, auth = true, signal } = {})
     })
   } catch (error) {
     if (error.name === 'AbortError') throw error
-    throw new ApiError('Cannot reach the HandyAI server. Is the backend running?', 0)
+    throw offline(0)
   }
 
   if (response.status === 204) return null
@@ -59,13 +96,10 @@ async function request(path, { method = 'GET', body, auth = true, signal } = {})
   const text = await response.text()
   const payload = text ? safeParse(text) : null
 
-  // A page instead of JSON means the request never reached the API: on Vercel, an unset
-  // VITE_API_BASE_URL sends /api to the site itself, which answers with index.html.
-  if (text && payload === null) {
-    throw new ApiError(
-      'The HandyAI server could not be reached. Check that VITE_API_BASE_URL points at the backend.',
-      response.status,
-    )
+  // A page instead of JSON means the request never reached the API: the host's own error page
+  // while the server restarts, or (misconfigured) the site's index.html.
+  if ((text && payload === null) || RETRYABLE_STATUS.has(response.status)) {
+    throw offline(response.status)
   }
 
   if (!response.ok) {
@@ -112,6 +146,8 @@ export const api = {
   register: (payload) => request('/auth/register', { method: 'POST', body: payload, auth: false }),
   login: (payload) => request('/auth/login', { method: 'POST', body: payload, auth: false }),
   me: () => request('/auth/me'),
+  /** Ends the session on the server too, so a copied token stops working. */
+  logout: () => request('/auth/logout', { method: 'POST' }).catch(() => null),
   updateProfile: (payload) => request('/auth/me', { method: 'PUT', body: payload }),
 
   professions: (signal) => request('/professions', { signal, auth: false }),

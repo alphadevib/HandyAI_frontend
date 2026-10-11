@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /profile
+Disallow: /subscriptions
+
+Sitemap: https://ib11.vercel.app/sitemap.xml

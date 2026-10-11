@@ -56,7 +56,7 @@ export default function Home() {
     api.stats(controller.signal).then(setStats).catch(fail)
     api.categories(controller.signal).then(setCategories).catch(fail)
     api
-      .tools({ freePlan: true, size: 4, sort: 'rating' }, controller.signal)
+      .tools({ freePlan: true, size: 4, sort: 'popular' }, controller.signal)
       .then((result) => setFreeTools(result.content))
       .catch(fail)
     api
@@ -229,7 +229,7 @@ export default function Home() {
         <section className="shelf">
           <header className="shelf-head">
             <h2>Free to start, hard to quit</h2>
-            <p>The best-rated tools you can try without a card.</p>
+            <p>Popular tools you can try without a card.</p>
           </header>
           <div className="product-grid">
             {freeTools.map((tool) => (

@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react'
-import { readFileSync } from 'node:fs'
+import { copyFileSync, readFileSync } from 'node:fs'
 import { defineConfig } from 'vite'
 
 const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8'))
@@ -25,10 +25,25 @@ function versionFile() {
   }
 }
 
+/**
+ * Vercel only sends the app shell for real routes (see vercel.json); every other address gets
+ * 404.html with a genuine 404 status. That page is the same shell, so the app still renders its
+ * own "not found" screen.
+ */
+function notFoundPage() {
+  return {
+    name: 'handyai-404-page',
+    apply: 'build',
+    writeBundle(options) {
+      copyFileSync(`${options.dir}/index.html`, `${options.dir}/404.html`)
+    },
+  }
+}
+
 // The dev server proxies /api to Spring Boot, so the browser talks to one origin and the
 // production build can be served from anywhere without changing the frontend code.
 export default defineConfig({
-  plugins: [react(), versionFile()],
+  plugins: [react(), versionFile(), notFoundPage()],
   define: {
     __APP_BUILD__: JSON.stringify(build),
   },

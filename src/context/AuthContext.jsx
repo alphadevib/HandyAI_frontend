@@ -54,6 +54,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   const logout = useCallback(() => {
+    if (getToken()) api.logout()
     setToken(null)
     setUser(null)
   }, [])
