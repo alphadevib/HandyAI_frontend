@@ -2999,6 +2999,39 @@ a.pill:hover {
   margin: 0;
 }
 
+/* Replies are Markdown (Claude writes bold names and bullet lists): keep them compact. */
+.markdown > * + * {
+  margin-top: 0.55em;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0;
+  padding-left: 1.25em;
+}
+
+.markdown li + li {
+  margin-top: 0.3em;
+}
+
+.markdown-heading {
+  font-weight: 700;
+}
+
+.markdown code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  padding: 0.1em 0.35em;
+  border-radius: 6px;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.markdown a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 .bubble-row.user .bubble {
   background: var(--accent);
   color: var(--accent-contrast);

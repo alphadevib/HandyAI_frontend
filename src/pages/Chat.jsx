@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { api } from '../api/client'
 import { BrandMark } from '../components/Brand'
 import { Icon } from '../components/Icons'
+import Markdown from '../components/Markdown'
 import ProductCard from '../components/ProductCard'
 import { useAuth } from '../context/AuthContext'
 import { usePrefs } from '../context/PrefsContext'
@@ -209,7 +210,11 @@ export default function Chat() {
           <div key={message.id} className={`bubble-row ${message.role}`}>
             {message.role === 'assistant' && <BrandMark size={30} className="bubble-avatar" />}
             <div className={`bubble ${message.error ? 'is-error' : ''}`}>
-              <p>{message.text}</p>
+              {message.role === 'assistant' && !message.error ? (
+                <Markdown text={message.text} />
+              ) : (
+                <p>{message.text}</p>
+              )}
               {message.picks?.length > 0 && (
                 <div className="chat-picks">
                   {message.picks.map((pick) => (
