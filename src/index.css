@@ -40,6 +40,7 @@
   --danger-soft: rgba(255, 122, 107, 0.12);
   --brand-gradient: linear-gradient(135deg, #f4f4f5 0%, #8d8d92 100%);
   --wordmark-fill: linear-gradient(180deg, #2b2b2e 0%, #161618 45%, rgba(3, 3, 3, 0) 92%);
+  --spot: rgba(223, 223, 224, 0.08);
   --sheen: rgba(255, 255, 255, 0.015);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.6);
   --shadow-md: 0 14px 34px rgba(0, 0, 0, 0.55);
@@ -104,6 +105,7 @@
   --danger-soft: rgba(194, 65, 12, 0.1);
   --brand-gradient: linear-gradient(135deg, #3a3a3e 0%, #030303 100%);
   --wordmark-fill: linear-gradient(180deg, #d4d4d6 0%, #e6e6e7 45%, rgba(244, 244, 243, 0) 92%);
+  --spot: rgba(3, 3, 3, 0.05);
   --sheen: rgba(255, 255, 255, 0);
   --shadow-sm: 0 1px 2px rgba(3, 3, 3, 0.06);
   --shadow-md: 0 12px 30px rgba(3, 3, 3, 0.08);

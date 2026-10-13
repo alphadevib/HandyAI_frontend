@@ -2,6 +2,7 @@ import Announcements from './components/Announcements'
 import FloatingBars from './components/FloatingBars'
 import SuggestionDialog from './components/SuggestionDialog'
 import Footer from './components/Footer'
+import Intro from './components/Intro'
 import Navbar from './components/Navbar'
 import Spinner from './components/Spinner'
 import { AuthProvider, useAuth } from './context/AuthContext'
@@ -143,6 +144,7 @@ export default function App() {
           <Announcements />
           <SuggestionDialog />
         </div>
+        <Intro />
       </PrefsProvider>
     </AuthProvider>
   )

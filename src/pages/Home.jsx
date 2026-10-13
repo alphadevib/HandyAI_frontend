@@ -28,6 +28,10 @@ const STEPS = [
 /** The giant wordmark behind the hero, one span per letter so the letters can rise in turn. */
 const HERO_WORD = [...'HANDYAI']
 
+/** The pitch, lit word by word as it scrolls past (see .scrub in effects.js). */
+const STATEMENT =
+  'The AI tools store that shows its prices. Compare, choose and keep every subscription in check.'.split(' ')
+
 /** A four-pointed sparkle, like the stars scattered around a storefront hero. */
 function Sparkle({ className }) {
   return (
@@ -194,6 +198,33 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      <section className="statement">
+        <p className="statement-text scrub" style={{ '--n': STATEMENT.length }}>
+          {STATEMENT.map((word, index) => (
+            <span key={index} style={{ '--i': index }}>
+              {word}{' '}
+            </span>
+          ))}
+        </p>
+        <figure className="statement-frame">
+          <div className="statement-logos">
+            {(trending.length ? trending.slice(0, 9) : Array.from({ length: 9 }, () => null)).map(
+              (tool, index) =>
+                tool ? (
+                  <Link key={tool.slug} to={`/tools/${tool.slug}`} className="statement-logo" title={tool.name}>
+                    <ToolLogo tool={tool} size={64} />
+                  </Link>
+                ) : (
+                  <span key={index} className="statement-logo">
+                    <span className="stack-skeleton" />
+                  </span>
+                ),
+            )}
+          </div>
+          <figcaption>Thirty-nine AI tools, one honest price tag each.</figcaption>
+        </figure>
+      </section>
 
       <Message>{error || favorites.error}</Message>
 

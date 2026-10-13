@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { BrandMark } from './Brand'
 import { Icon } from './Icons'
 import { openSuggestions } from './SuggestionDialog'
+import { introPending, onIntroDone } from '../intro'
 import { RELEASES, WHATS_NEW_WINDOW_MS } from '../releases'
 import { Link } from '../router'
 
@@ -45,6 +46,21 @@ export default function Announcements() {
     return null
   })
 
+  // A first-time visitor meets the welcome note after the launch intro, not on top of it.
+  // After an intro, it waits a beat more so the stage gets the first look.
+  const [introDone, setIntroDone] = useState(false)
+  useEffect(() => {
+    const pause = introPending() ? 1400 : 0
+    let timer
+    const stop = onIntroDone(() => {
+      timer = setTimeout(() => setIntroDone(true), pause)
+    })
+    return () => {
+      stop()
+      clearTimeout(timer)
+    }
+  }, [])
+
   const close = () => {
     write(WELCOMED_KEY, '1')
     // Someone welcomed today does not need "What's new" for the release they just met.
@@ -54,8 +70,8 @@ export default function Announcements() {
 
   return (
     <>
-      {note === 'welcome' && <WelcomeNote onClose={close} />}
-      {note === 'whats-new' && <WhatsNew release={RELEASES[0]} onClose={close} />}
+      {introDone && note === 'welcome' && <WelcomeNote onClose={close} />}
+      {introDone && note === 'whats-new' && <WhatsNew release={RELEASES[0]} onClose={close} />}
       <UpdateBar />
     </>
   )

@@ -8,6 +8,16 @@
  */
 export const RELEASES = [
   {
+    version: '2.4.0',
+    title: 'Lights, stage, launch',
+    highlights: [
+      'A launch-style intro the first time you visit (skip it any time, or press Esc)',
+      'A soft spotlight follows your pointer across the home stage',
+      'Our pitch now lights up word by word as you scroll, beside a close-up of this week’s tools',
+      'Section titles settle into place as you reach them',
+    ],
+  },
+  {
     version: '2.3.0',
     title: 'Carbon edition',
     highlights: [
