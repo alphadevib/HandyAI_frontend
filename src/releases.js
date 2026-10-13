@@ -8,27 +8,6 @@
  */
 export const RELEASES = [
   {
-    version: '2.4.0',
-    title: 'Lights, stage, launch',
-    highlights: [
-      'A launch-style intro the first time you visit (skip it any time, or press Esc)',
-      'A soft spotlight follows your pointer across the home stage',
-      'Our pitch now lights up word by word as you scroll, beside a close-up of this week’s tools',
-      'Section titles settle into place as you reach them',
-    ],
-  },
-  {
-    version: '2.3.0',
-    title: 'Carbon edition',
-    highlights: [
-      'A carbon-black, monochrome look with light headlines and hairline frames',
-      'A giant HANDYAI wordmark behind the home spotlight that drifts as you scroll',
-      'Tool logos rest in greyscale and take their colour when you reach for them',
-      'Section links are back in the header on wide screens',
-      'Pages now load on demand, so the home page opens faster',
-    ],
-  },
-  {
     version: '2.2.0',
     title: 'The shelf got a makeover',
     highlights: [

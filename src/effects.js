@@ -8,8 +8,6 @@
  *  - buttons and chips get a ripple where they were pressed
  *  - listings, panels and section headings fade up the first time they scroll into view
  *  - the header condenses once the page scrolls
- *  - a soft spotlight follows the pointer across the home stage
- *  - text marked .scrub lights up word by word as it scrolls through the viewport
  * People who ask their system for reduced motion get none of the motion.
  */
 
@@ -18,8 +16,6 @@ const MAGNET_SELECTOR = '.btn-lg, .btn-primary'
 const MAGNET_PULL = 0.22
 const MAGNET_MAX_PX = 8
 const RIPPLE_SELECTOR = '.btn, .chip, .icon-btn, .mic-btn, .send-btn'
-const SPOTLIGHT_SELECTOR = '.shop-hero'
-const SCRUB_SELECTOR = '.scrub'
 const REVEAL_SELECTOR =
   '.product-card, .category-card, .section-head, .shelf-head, .panel, .kpi, .stat-tile, .sub-row, .bento-tile, .step, .concierge-band, .empty-state'
 
@@ -36,8 +32,6 @@ export function installEffects() {
   installBloom()
   installMagnet(reducedMotion, finePointer)
   installRipple(reducedMotion)
-  installSpotlight(finePointer)
-  if (!reducedMotion.matches) installScrub()
   if (!reducedMotion.matches && 'IntersectionObserver' in window) installReveal()
 }
 
@@ -125,62 +119,6 @@ function installRipple(reducedMotion) {
     },
     { passive: true },
   )
-}
-
-/** The home stage is lit from wherever the pointer is, like a product under a studio light. */
-function installSpotlight(finePointer) {
-  document.addEventListener(
-    'pointermove',
-    (event) => {
-      if (!finePointer.matches) return
-      const stage = event.target.closest?.(SPOTLIGHT_SELECTOR)
-      if (!stage) return
-      const rect = stage.getBoundingClientRect()
-      stage.style.setProperty('--mx', `${(event.clientX - rect.left).toFixed(0)}px`)
-      stage.style.setProperty('--my', `${(event.clientY - rect.top).toFixed(0)}px`)
-      stage.classList.add('is-lit')
-    },
-    { passive: true },
-  )
-  document.addEventListener(
-    'pointerout',
-    (event) => {
-      const stage = event.target.closest?.(SPOTLIGHT_SELECTOR)
-      if (stage && !stage.contains(event.relatedTarget)) stage.classList.remove('is-lit')
-    },
-    { passive: true },
-  )
-}
-
-/**
- * Sets --p (0 to 1) on every .scrub element: how far it has travelled from entering at the bottom
- * of the viewport to sitting a third of the way down. The CSS turns that into lit words.
- */
-function installScrub() {
-  document.documentElement.classList.add('fx-scrub')
-  let ticking = false
-  const update = () => {
-    ticking = false
-    const height = window.innerHeight
-    for (const element of document.querySelectorAll(SCRUB_SELECTOR)) {
-      const rect = element.getBoundingClientRect()
-      if (rect.bottom < -height || rect.top > height * 2) continue
-      const start = height * 0.92
-      const end = height * 0.3
-      const progress = (start - rect.top) / (start - end + rect.height * 0.5)
-      element.style.setProperty('--p', Math.min(1, Math.max(0, progress)).toFixed(3))
-    }
-  }
-  const request = () => {
-    if (!ticking) {
-      ticking = true
-      requestAnimationFrame(update)
-    }
-  }
-  window.addEventListener('scroll', request, { passive: true })
-  window.addEventListener('resize', request, { passive: true })
-  new MutationObserver(request).observe(document.body, { childList: true, subtree: true })
-  request()
 }
 
 function installReveal() {

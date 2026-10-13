@@ -31,9 +31,6 @@ const COLUMNS = [
 export default function Footer() {
   return (
     <footer className="site-footer">
-      <p className="footer-wordmark" aria-hidden="true">
-        HANDYAI
-      </p>
       <div className="footer-inner">
         <div className="footer-brand">
           <span className="brand">
@@ -62,12 +59,7 @@ export default function Footer() {
         ))}
       </div>
       <p className="footer-copy">
-        <span>
-          HandyAI © {new Date().getFullYear()} · v{__APP_BUILD__.version}
-          <span className="footer-credit">
-            © {new Date().getFullYear()} ikhlas.in creations. All rights reserved.
-          </span>
-        </span>
+        <span>HandyAI © {new Date().getFullYear()} · v{__APP_BUILD__.version}</span>
         <span>
           Prices are indicative list prices of each tool&apos;s entry plan; rupee amounts use a fixed
           rate. You buy on the maker&apos;s own website.

@@ -25,33 +25,11 @@ const STEPS = [
   },
 ]
 
-/** The giant wordmark behind the hero, one span per letter so the letters can rise in turn. */
-const HERO_WORD = [...'HANDYAI']
-
-/** The pitch, lit word by word as it scrolls past (see .scrub in effects.js). */
-const STATEMENT =
-  'The AI tools store that shows its prices. Compare, choose and keep every subscription in check.'.split(' ')
-
 /** A four-pointed sparkle, like the stars scattered around a storefront hero. */
 function Sparkle({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
       <path d="M12 0c.8 6.4 5.6 11.2 12 12-6.4.8-11.2 5.6-12 12-.8-6.4-5.6-11.2-12-12C6.4 11.2 11.2 6.4 12 0z" />
-    </svg>
-  )
-}
-
-/** Thin spokes turning slowly behind the concierge band, like a wheel at speed. */
-function Wheel() {
-  const spokes = Array.from({ length: 36 }, (_, index) => index * 10)
-  return (
-    <svg className="band-wheel" viewBox="-100 -100 200 200" aria-hidden="true">
-      <circle r="96" />
-      <circle r="88" />
-      <circle r="10" />
-      {spokes.map((angle) => (
-        <line key={angle} x1="0" y1="-10" x2="0" y2="-88" transform={`rotate(${angle} 0 0) rotate(8 0 -10)`} />
-      ))}
     </svg>
   )
 }
@@ -120,13 +98,37 @@ export default function Home() {
   return (
     <>
       <section className="shop-hero">
-        <p className="hero-wordmark" aria-hidden="true">
-          {HERO_WORD.map((letter, index) => (
-            <span key={index} style={{ '--i': index }}>
-              {letter}
-            </span>
-          ))}
-        </p>
+        <div className="shop-hero-copy">
+          <h1>
+            Find the AI that works <span className="hero-outline">the way</span> you do
+          </h1>
+          <p className="lede">
+            Every tool priced side by side, sorted by the work it does and matched to your
+            profession. Shop smart, subscribe once, and stop paying for the ones you forgot.
+          </p>
+          <div className="hero-actions">
+            <Link to="/marketplace" className="btn btn-primary btn-lg">
+              Start shopping <Icon name="arrow" size={18} />
+            </Link>
+            <Link to="/chat" className="btn btn-secondary btn-lg">
+              Describe a task
+            </Link>
+          </div>
+          <dl className="hero-stats">
+            <div>
+              <dt>{stats?.toolCount ?? '39'}+</dt>
+              <dd>Tools on the shelf</dd>
+            </div>
+            <div>
+              <dt>{stats?.categoryCount ?? '13'}</dt>
+              <dd>Aisles to browse</dd>
+            </div>
+            <div>
+              <dt>3</dt>
+              <dd>Ways to pay, compared</dd>
+            </div>
+          </dl>
+        </div>
 
         <div className="shop-hero-art" aria-hidden="true">
           <Sparkle className="sparkle sparkle-lg" />
@@ -150,39 +152,6 @@ export default function Home() {
             <small>/mo</small>
           </span>
         </div>
-
-        <div className="shop-hero-copy">
-          <h1>
-            Find the AI that works <span className="hero-outline">the way</span> you do
-          </h1>
-          <p className="lede">
-            Every tool priced side by side, sorted by the work it does and matched to your
-            profession. Shop smart, subscribe once, and stop paying for the ones you forgot.
-          </p>
-          <div className="hero-actions">
-            <Link to="/marketplace" className="btn btn-primary btn-lg">
-              Start shopping <Icon name="arrow" size={18} />
-            </Link>
-            <Link to="/chat" className="btn btn-secondary btn-lg">
-              Describe a task
-            </Link>
-          </div>
-        </div>
-
-        <dl className="hero-stats">
-          <div>
-            <dt>{stats?.toolCount ?? '39'}+</dt>
-            <dd>Tools on the shelf</dd>
-          </div>
-          <div>
-            <dt>{stats?.categoryCount ?? '13'}</dt>
-            <dd>Aisles to browse</dd>
-          </div>
-          <div>
-            <dt>3</dt>
-            <dd>Ways to pay, compared</dd>
-          </div>
-        </dl>
       </section>
 
       <div className="brand-strip" aria-hidden="true">
@@ -198,33 +167,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
-      <section className="statement">
-        <p className="statement-text scrub" style={{ '--n': STATEMENT.length }}>
-          {STATEMENT.map((word, index) => (
-            <span key={index} style={{ '--i': index }}>
-              {word}{' '}
-            </span>
-          ))}
-        </p>
-        <figure className="statement-frame">
-          <div className="statement-logos">
-            {(trending.length ? trending.slice(0, 9) : Array.from({ length: 9 }, () => null)).map(
-              (tool, index) =>
-                tool ? (
-                  <Link key={tool.slug} to={`/tools/${tool.slug}`} className="statement-logo" title={tool.name}>
-                    <ToolLogo tool={tool} size={64} />
-                  </Link>
-                ) : (
-                  <span key={index} className="statement-logo">
-                    <span className="stack-skeleton" />
-                  </span>
-                ),
-            )}
-          </div>
-          <figcaption>Thirty-nine AI tools, one honest price tag each.</figcaption>
-        </figure>
-      </section>
 
       <Message>{error || favorites.error}</Message>
 
@@ -352,7 +294,6 @@ export default function Home() {
       </section>
 
       <section className="concierge-band">
-        <Wheel />
         <h2>Can&apos;t name the tool? Name the job.</h2>
         <form className="concierge-form" onSubmit={askConcierge}>
           <label htmlFor="concierge-job" className="sr-only">

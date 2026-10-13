@@ -13,7 +13,7 @@ export function BrandMark({ size = 36, className }) {
       role="img"
       aria-hidden="true"
     >
-      <rect x="1.5" y="1.5" width="61" height="61" rx="18" fill="#030303" stroke="rgba(255,255,255,0.16)" strokeWidth="1.5" />
+      <rect x="1.5" y="1.5" width="61" height="61" rx="18" fill="#0c0c0d" stroke="rgba(255,255,255,0.16)" strokeWidth="1.5" />
       <path
         d="M21 14v36M21 37c0-8 5.2-12.5 11.5-12.5S44 29 44 37v13"
         fill="none"
