@@ -11,6 +11,12 @@ const TICKER = [
   { text: 'Paying monthly out of habit? Flip any listing to annual and compare.', link: '/marketplace?sort=price_asc', cta: 'See prices' },
   { text: "Can't name the tool? Describe the job instead.", link: '/chat', cta: 'Ask the concierge' },
 ]
+const NAV = [
+  { to: '/', label: 'Home', exact: true },
+  { to: '/marketplace', label: 'Shop' },
+  { to: '/categories', label: 'Aisles' },
+  { to: '/chat', label: 'Concierge' },
+]
 const TICKER_MS = 5000
 const TICKER_KEY = 'handyai.tickerClosed'
 
@@ -60,8 +66,8 @@ function Ticker() {
 }
 
 /**
- * The storefront header: logo, a wide search and the account. Page navigation lives in the side
- * rail (see FloatingBars), so the top stays quiet.
+ * The storefront header: logo, a row of quiet text links, search and the account. On wide screens
+ * the links replace the side rail; narrower screens keep the rail (see FloatingBars).
  */
 export default function Navbar() {
   const { user, isAuthenticated, isAdmin, logout } = useAuth()
@@ -112,6 +118,22 @@ export default function Navbar() {
             <BrandMark size={34} />
             <Wordmark />
           </Link>
+
+          <nav className="header-links" aria-label="Sections">
+            {NAV.map((item) => {
+              const current = item.exact ? path === item.to : path.startsWith(item.to)
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={current ? 'is-active' : undefined}
+                  aria-current={current ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
 
           <form className="header-search" role="search" onSubmit={search}>
             <Icon name="search" size={18} />

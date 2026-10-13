@@ -8,6 +8,17 @@
  */
 export const RELEASES = [
   {
+    version: '2.3.0',
+    title: 'Carbon edition',
+    highlights: [
+      'A carbon-black, monochrome look with light headlines and hairline frames',
+      'A giant HANDYAI wordmark behind the home spotlight that drifts as you scroll',
+      'Tool logos rest in greyscale and take their colour when you reach for them',
+      'Section links are back in the header on wide screens',
+      'Pages now load on demand, so the home page opens faster',
+    ],
+  },
+  {
     version: '2.2.0',
     title: 'The shelf got a makeover',
     highlights: [

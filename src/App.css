@@ -1,5 +1,5 @@
 /* Layout and components. Mobile first: every wider layout is opt-in at a breakpoint.
-   A dark, minimal storefront: quiet surfaces, pill controls that bloom on hover. */
+   A carbon-black launch page: hairline frames, light type, silver pills that bloom on hover. */
 
 .app-shell {
   display: flex;
@@ -48,8 +48,8 @@ main {
   border: 1px solid transparent;
   background: transparent;
   font-size: 0.92rem;
-  font-weight: 600;
-  letter-spacing: 0.005em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   white-space: nowrap;
   text-decoration: none;
   cursor: pointer;
@@ -128,12 +128,15 @@ main {
 }
 
 .btn-primary {
+  --bloom: var(--bg);
+  --bloom-text: var(--text-strong);
   background: var(--ink);
+  border-color: var(--ink);
   color: var(--ink-text);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 14px 34px -12px var(--accent-glow);
+  box-shadow: 0 14px 34px -14px var(--accent-glow);
 }
 
 .btn-dark {
@@ -143,6 +146,7 @@ main {
 
 .btn-secondary {
   border-color: var(--border-strong);
+  background: var(--glass);
   color: var(--text-strong);
   --bloom: var(--ink);
   --bloom-text: var(--ink-text);
@@ -384,10 +388,11 @@ a.pill:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 34px;
   padding: 0.35rem 2.75rem;
-  background: var(--ink);
-  color: var(--ink-text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
   font-size: 0.82rem;
   text-align: center;
 }
@@ -405,15 +410,15 @@ a.pill:hover {
 }
 
 .ticker-link {
-  color: inherit;
-  font-weight: 700;
+  color: var(--text-strong);
+  font-weight: 500;
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-color: color-mix(in srgb, currentColor 40%, transparent);
 }
 
 .ticker-link:hover {
-  color: inherit;
+  color: var(--text-strong);
   text-decoration-color: currentColor;
 }
 
@@ -442,9 +447,9 @@ a.pill:hover {
 
 .navbar {
   padding: 0.65rem 1rem;
-  background: color-mix(in srgb, var(--bg) 84%, transparent);
-  backdrop-filter: saturate(140%) blur(16px);
-  -webkit-backdrop-filter: saturate(140%) blur(16px);
+  background: color-mix(in srgb, var(--bg) 72%, transparent);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--border);
   transition: padding 0.3s ease;
 }
@@ -500,16 +505,66 @@ a.pill:hover {
 }
 
 .wordmark {
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 900;
-  font-stretch: 125%;
-  letter-spacing: 0.01em;
+  font-family: var(--condensed);
+  font-size: 1.2rem;
+  font-weight: 800;
+  font-stretch: 100%;
+  letter-spacing: 0.04em;
   color: var(--text-strong);
 }
 
 .wordmark-dot {
-  color: var(--accent);
+  color: var(--text-muted);
+}
+
+/* Text links, shown once the header is wide enough to replace the side rail. */
+.header-links {
+  display: none;
+  align-items: center;
+  gap: 1.6rem;
+  margin-left: 1.5rem;
+}
+
+.header-links a {
+  position: relative;
+  padding: 0.35rem 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.header-links a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-strong);
+  translate: -50% 0;
+  scale: 0;
+  transition: scale 0.4s var(--ease-spring);
+}
+
+.header-links a:hover,
+.header-links a.is-active {
+  color: var(--text-strong);
+  text-decoration: none;
+}
+
+.header-links a.is-active::after {
+  scale: 1;
+}
+
+/* The header's "Join free" is an outlined pill, like a launch page's order button. */
+.nav-auth .btn-primary {
+  --bloom: var(--ink);
+  --bloom-text: var(--ink-text);
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text-strong);
 }
 
 .header-search {
@@ -729,7 +784,7 @@ a.pill:hover {
   height: 34px;
   border-radius: 50%;
   background: var(--brand-gradient);
-  color: #0c0c0d;
+  color: var(--accent-contrast);
   font-weight: 800;
 }
 
@@ -1043,6 +1098,31 @@ a.pill:hover {
   }
 }
 
+@media (min-width: 1100px) {
+  .header-links {
+    display: flex;
+  }
+
+  .header-search {
+    max-width: 320px;
+    min-height: 42px;
+    margin-right: 0;
+  }
+
+  .header-prefs {
+    display: flex;
+  }
+
+  .rail {
+    display: none;
+  }
+
+  main,
+  .site-footer {
+    padding-right: 1rem;
+  }
+}
+
 /* ---------- Page scaffolding ------------------------------------------------------------- */
 
 .page {
@@ -1106,51 +1186,120 @@ a.pill:hover {
 
 /* ---------- Home: the storefront ------------------------------------------------------------ */
 
+/* A launch stage: a giant condensed HANDYAI fading into the dark, the hand of tool tiles standing
+   in front of it like a product shot, the pitch low on the left and the numbers low on the right. */
 .shop-hero {
   position: relative;
+  isolation: isolate;
   display: grid;
-  gap: 2.5rem;
-  align-items: center;
-  padding-block: 2.5rem 2rem;
+  grid-template-areas: 'art' 'copy' 'stats';
+  gap: 2rem;
+  min-height: clamp(560px, calc(100svh - 110px), 860px);
+  padding-block: 1.5rem 2.5rem;
+}
+
+.hero-wordmark {
+  position: absolute;
+  z-index: -1;
+  top: 0.75rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--condensed);
+  font-size: clamp(5.4rem, 28.5vw, 23rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  font-variation-settings: 'wdth' 62;
+  line-height: 0.84;
+  letter-spacing: -0.01em;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero-wordmark span {
+  color: transparent;
+  background: var(--wordmark-fill);
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: letter-rise 1.2s var(--ease-out) backwards;
+  animation-delay: calc(var(--i) * 70ms + 80ms);
+}
+
+@keyframes letter-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40%);
+  }
+}
+
+/* Where the browser supports scroll-linked animation, the wordmark sinks and fades as you scroll
+   past the hero, so the product seems to move forward. */
+@supports (animation-timeline: scroll()) {
+  .hero-wordmark {
+    animation: wordmark-drift linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 90vh;
+  }
+
+  @keyframes wordmark-drift {
+    to {
+      translate: 0 22%;
+      opacity: 0.2;
+    }
+  }
+}
+
+.shop-hero-copy {
+  grid-area: copy;
+  align-self: end;
 }
 
 .shop-hero h1 {
-  max-width: 13ch;
-  margin-bottom: 1.25rem;
-  font-size: clamp(2.3rem, 6.2vw, 4.6rem);
-  line-height: 0.98;
-  letter-spacing: -0.01em;
+  max-width: 17ch;
+  margin-bottom: 1rem;
+  font-size: clamp(2.2rem, 4.6vw, 3.7rem);
+  font-weight: 300;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
 }
 
-/* Outlined words that flood with lime once, as if inked in. */
+/* The two quiet words carry a slow silver sheen, like light running along a carbon tube. */
 .hero-outline {
   color: transparent;
-  -webkit-text-stroke: 1.5px var(--text-strong);
-  background: linear-gradient(var(--accent), var(--accent)) no-repeat 0 0 / 0% 100%;
+  background: linear-gradient(100deg, var(--text-muted) 30%, var(--text-strong) 50%, var(--text-muted) 70%) 0 0 / 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
-  animation: ink-in 1.4s var(--ease-out) 0.9s forwards;
+  animation: sheen 6s linear 1s infinite;
 }
 
-@keyframes ink-in {
+@keyframes sheen {
+  from {
+    background-position: 130% 0;
+  }
   to {
-    background-size: 100% 100%;
-    -webkit-text-stroke-color: var(--accent);
+    background-position: -130% 0;
   }
 }
 
 .shop-hero .lede {
-  max-width: 50ch;
-  margin-bottom: 1.75rem;
+  max-width: 46ch;
+  margin-bottom: 1.5rem;
+  font-size: 0.98rem;
+  color: var(--text);
 }
 
-.shop-hero-copy > * {
-  animation: rise 0.8s var(--ease-out) backwards;
+.shop-hero-copy > *,
+.hero-stats {
+  animation: rise 0.9s var(--ease-out) backwards;
+  animation-delay: 0.45s;
 }
 
-.shop-hero-copy > :nth-child(2) { animation-delay: 0.1s; }
-.shop-hero-copy > :nth-child(3) { animation-delay: 0.2s; }
-.shop-hero-copy > :nth-child(4) { animation-delay: 0.3s; }
+.shop-hero-copy > :nth-child(2) { animation-delay: 0.55s; }
+.shop-hero-copy > :nth-child(3) { animation-delay: 0.65s; }
+.hero-stats { animation-delay: 0.75s; }
 
 @keyframes rise {
   from {
@@ -1162,11 +1311,12 @@ a.pill:hover {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 2.25rem;
+  gap: 0.65rem;
 }
 
 .hero-stats {
+  grid-area: stats;
+  align-self: end;
   display: flex;
   flex-wrap: wrap;
   gap: 1.25rem 0;
@@ -1174,8 +1324,8 @@ a.pill:hover {
 }
 
 .hero-stats div {
-  margin-right: 1.75rem;
-  padding-right: 1.75rem;
+  margin-right: 1.5rem;
+  padding-right: 1.5rem;
   border-right: 1px solid var(--border-strong);
 }
 
@@ -1186,33 +1336,38 @@ a.pill:hover {
 }
 
 .hero-stats dt {
-  font-family: var(--display);
-  font-size: clamp(1.6rem, 3.4vw, 2.3rem);
-  font-weight: 800;
-  font-stretch: 112%;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
   line-height: 1.1;
   color: var(--text-strong);
 }
 
 .hero-stats dd {
-  margin: 0;
-  font-size: 0.85rem;
+  margin: 0.2rem 0 0;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 
 .shop-hero-art {
+  grid-area: art;
   position: relative;
   display: grid;
   place-items: center;
-  min-height: 340px;
+  min-height: 320px;
+  margin-top: clamp(2.5rem, 9vw, 6rem);
 }
 
-/* Three tool tiles stacked like a hand of cards; they fan out on hover. */
+/* Three tool tiles stacked like a hand of cards, in carbon and graphite; they fan out and take
+   their colour on hover. */
 .tile-stack {
   position: relative;
   width: min(100%, 380px);
   aspect-ratio: 1;
-  animation: float 6s ease-in-out infinite;
+  animation: float 7s ease-in-out infinite;
 }
 
 .stack-tile {
@@ -1223,15 +1378,15 @@ a.pill:hover {
   place-items: center;
   align-content: center;
   gap: 0.9rem;
-  border-radius: 32px;
-  background: linear-gradient(160deg, var(--surface-3), var(--surface));
+  border-radius: 30px;
+  background: linear-gradient(165deg, var(--surface-3), var(--surface) 70%);
   border: 1px solid var(--border-strong);
   box-shadow: var(--shadow-lg);
   rotate: var(--rot);
   translate: calc((var(--i) - 1) * 18%) calc((var(--i) - 1) * -4%);
   transition: rotate 0.7s var(--ease-spring), translate 0.7s var(--ease-spring);
-  animation: stack-in 0.9s var(--ease-out) backwards;
-  animation-delay: calc(var(--i) * 120ms + 250ms);
+  animation: stack-in 1s var(--ease-out) backwards;
+  animation-delay: calc(var(--i) * 120ms + 350ms);
 }
 
 .stack-tile:nth-child(2) {
@@ -1246,7 +1401,7 @@ a.pill:hover {
 @keyframes stack-in {
   from {
     opacity: 0;
-    transform: translateY(50px) scale(0.85);
+    transform: translateY(60px) scale(0.85);
   }
 }
 
@@ -1258,12 +1413,19 @@ a.pill:hover {
 
 .stack-tile .tool-logo {
   border-radius: 24px;
-  box-shadow: 0 16px 30px -12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 16px 30px -12px rgba(0, 0, 0, 0.7);
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.6s ease;
+}
+
+.tile-stack:hover .tool-logo {
+  filter: none;
 }
 
 .stack-name {
-  font-weight: 700;
-  font-size: 0.95rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
   color: var(--text-strong);
 }
 
@@ -1283,83 +1445,99 @@ a.pill:hover {
 
 .sparkle {
   position: absolute;
-  fill: var(--text-strong);
+  fill: var(--text-muted);
   animation: twinkle 3.6s ease-in-out infinite;
 }
 
 .sparkle-lg {
-  top: 2%;
-  right: 6%;
-  width: 64px;
+  top: 4%;
+  right: 8%;
+  width: 46px;
 }
 
 .sparkle-sm {
-  bottom: 16%;
-  left: 3%;
-  width: 34px;
-  fill: var(--accent);
+  bottom: 18%;
+  left: 6%;
+  width: 24px;
+  fill: var(--text-strong);
   animation-delay: 1.2s;
 }
 
 @keyframes twinkle {
   50% {
     transform: scale(0.65) rotate(45deg);
-    opacity: 0.55;
+    opacity: 0.5;
   }
 }
 
 .price-chip {
   position: absolute;
   z-index: 3;
-  right: 4%;
-  bottom: 8%;
-  padding: 0.55rem 1rem;
+  right: 6%;
+  bottom: 10%;
+  padding: 0.5rem 1rem;
   border-radius: 999px;
-  background: var(--accent);
-  color: var(--accent-contrast);
-  font-family: var(--display);
-  font-size: 1.15rem;
-  font-weight: 800;
-  box-shadow: 0 14px 30px -10px var(--accent-glow);
-  rotate: -6deg;
-  animation: chip-bob 4s ease-in-out infinite;
+  background: var(--glass-strong);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-strong);
+  color: var(--text-strong);
+  font-size: 1.05rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-md);
+  animation: chip-bob 5s ease-in-out infinite;
 }
 
 .price-chip small {
-  font-family: var(--sans);
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--text-muted);
 }
 
 @keyframes chip-bob {
   50% {
     translate: 0 -8px;
-    rotate: -2deg;
   }
 }
 
 @media (min-width: 960px) {
   .shop-hero {
-    grid-template-columns: 1.15fr 1fr;
-    min-height: 560px;
-    padding-block: 3.5rem 3rem;
+    grid-template-columns: 1fr auto;
+    grid-template-areas: 'art art' 'copy stats';
+    padding-block: 1.5rem 3rem;
+  }
+
+  .shop-hero-art {
+    min-height: 380px;
+    margin-top: 3.5rem;
+  }
+
+  .tile-stack {
+    width: min(100%, 380px);
+  }
+
+  /* The pitch rides up over the foot of the stage, as copy sits over a product shot. */
+  .shop-hero-copy,
+  .hero-stats {
+    position: relative;
+    z-index: 4;
+    margin-top: -5rem;
   }
 }
 
-/* A strip of tool names gliding past, like the brand bar under a shop's hero. */
+/* Tool names gliding past between hairlines, like the riders' quotes under a launch page. */
 .brand-strip {
   overflow: hidden;
-  padding: 1.15rem 0;
-  border-radius: var(--radius-lg);
-  background: var(--ink);
-  color: var(--ink-text);
-  mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+  padding: 1.35rem 0;
+  border-block: 1px solid var(--border);
+  color: var(--text);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
 
 .brand-track {
   display: flex;
   width: max-content;
-  animation: marquee 36s linear infinite;
+  animation: marquee 44s linear infinite;
 }
 
 .brand-strip:hover .brand-track {
@@ -1372,13 +1550,25 @@ a.pill:hover {
 }
 
 .brand-name {
-  padding: 0 2.25rem;
-  font-family: var(--display);
-  font-size: clamp(1.1rem, 2.6vw, 1.7rem);
-  font-weight: 850;
-  font-stretch: 125%;
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 2.5rem;
+  padding-left: 2.5rem;
+  font-size: clamp(1.05rem, 2.2vw, 1.45rem);
+  font-weight: 300;
+  letter-spacing: -0.01em;
   white-space: nowrap;
+  transition: color 0.3s ease;
+}
+
+.brand-name::after {
+  content: '✦';
+  font-size: 0.6em;
+  color: var(--text-muted);
+}
+
+.brand-name:hover {
+  color: var(--text-strong);
 }
 
 @keyframes marquee {
@@ -1388,49 +1578,51 @@ a.pill:hover {
 }
 
 .shelf {
-  margin-top: 4.5rem;
-  padding-bottom: 3.5rem;
+  margin-top: clamp(4rem, 9vw, 7rem);
+  padding-bottom: clamp(3rem, 6vw, 4.5rem);
   border-bottom: 1px solid var(--border);
 }
 
 .shelf-head {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   text-align: center;
 }
 
+/* Section titles: wide-set capitals in a light weight and a soft grey. */
 .shelf-head h2,
 .aisles > h2,
 .steps > h2 {
-  margin-bottom: 0.4rem;
-  font-size: clamp(1.7rem, 4.2vw, 2.8rem);
+  margin-bottom: 0.6rem;
+  font-size: clamp(1.8rem, 4.6vw, 3.1rem);
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--text);
 }
 
 .shelf-head p {
   margin: 0;
+  font-size: 0.92rem;
   color: var(--text-muted);
 }
 
 .shelf-foot {
   display: flex;
   justify-content: center;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 }
 
 .shelf-foot .btn {
   min-width: 220px;
 }
 
-/* "Shop by the job": a bento of the four biggest aisles, chips for the rest. */
+/* "Shop by the job": framed tiles of the four biggest aisles, chips for the rest. */
 .aisles {
-  margin-top: 4.5rem;
-  padding: clamp(1.25rem, 4vw, 3.5rem);
-  border-radius: var(--radius-xl);
-  background: var(--surface);
-  border: 1px solid var(--border);
+  margin-top: clamp(4rem, 9vw, 7rem);
 }
 
 .aisles > h2 {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   text-align: center;
 }
 
@@ -1455,15 +1647,15 @@ a.pill:hover {
   isolation: isolate;
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  min-height: 220px;
-  padding: 1.5rem 1.75rem;
+  gap: 0.35rem;
+  min-height: 240px;
+  padding: 1.6rem 1.75rem;
   border-radius: var(--radius-lg);
-  background: var(--surface-2);
+  background: radial-gradient(120% 90% at 100% 100%, var(--surface-3), var(--surface) 62%);
   border: 1px solid var(--border);
   color: var(--text-strong);
   text-decoration: none;
-  transition: border-color 0.3s ease, translate 0.45s var(--ease-out);
+  transition: border-color 0.4s ease, translate 0.5s var(--ease-out);
 }
 
 .bento-tile:hover {
@@ -1473,16 +1665,18 @@ a.pill:hover {
 }
 
 .bento-name {
-  max-width: 12ch;
-  font-family: var(--display);
-  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
-  font-weight: 800;
-  font-stretch: 115%;
+  max-width: 13ch;
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
   line-height: 1.1;
 }
 
 .bento-count {
-  font-size: 0.88rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 
@@ -1492,14 +1686,13 @@ a.pill:hover {
   right: -10px;
   bottom: -18px;
   color: var(--text-strong);
-  opacity: 0.1;
-  transition: transform 0.7s var(--ease-spring), opacity 0.3s ease, color 0.3s ease;
+  opacity: 0.07;
+  transition: transform 0.8s var(--ease-spring), opacity 0.4s ease;
 }
 
 .bento-tile:hover .bento-icon {
   transform: rotate(-12deg) scale(1.12);
-  opacity: 0.9;
-  color: var(--accent);
+  opacity: 0.4;
 }
 
 .bento-go {
@@ -1511,16 +1704,15 @@ a.pill:hover {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--ink);
-  color: var(--ink-text);
-  opacity: 0;
-  transform: scale(0.6) rotate(-45deg);
-  transition: transform 0.5s var(--ease-spring), opacity 0.25s ease;
+  border: 1px solid var(--border-strong);
+  color: var(--text-strong);
+  transition: transform 0.5s var(--ease-spring), background-color 0.3s ease, color 0.3s ease;
 }
 
 .bento-tile:hover .bento-go {
-  opacity: 1;
-  transform: none;
+  background: var(--ink);
+  color: var(--ink-text);
+  transform: rotate(-45deg);
 }
 
 .aisle-chips {
@@ -1538,49 +1730,49 @@ a.pill:hover {
   text-decoration: none;
 }
 
+/* The three moves read like a spec sheet: hairline rows of number, name and a quiet sentence. */
 .steps {
-  margin-top: 4.5rem;
+  margin-top: clamp(4rem, 9vw, 7rem);
 }
 
 .steps > h2 {
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   text-align: center;
 }
 
 .steps ol {
-  display: grid;
-  gap: 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
-}
-
-@media (min-width: 760px) {
-  .steps ol {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  border-bottom: 1px solid var(--border);
 }
 
 .step {
-  padding: 1.75rem;
-  border-radius: var(--radius-lg);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  transition: border-color 0.3s ease, translate 0.45s var(--ease-out);
+  display: grid;
+  gap: 0.35rem 2rem;
+  padding: 1.75rem 0.25rem;
+  border-top: 1px solid var(--border);
+  transition: background-color 0.4s ease;
 }
 
 .step:hover {
-  translate: 0 -4px;
-  border-color: var(--border-strong);
+  background: linear-gradient(90deg, transparent, var(--accent-soft), transparent);
+}
+
+@media (min-width: 760px) {
+  .step {
+    grid-template-columns: 7rem 1fr 1.5fr;
+    align-items: baseline;
+    padding-block: 2.25rem;
+  }
 }
 
 .step-number {
-  display: block;
-  margin-bottom: 1rem;
-  font-family: var(--display);
-  font-size: 3rem;
+  font-family: var(--condensed);
+  font-size: 3.2rem;
   font-weight: 900;
-  font-stretch: 125%;
+  font-stretch: 62%;
+  font-variation-settings: 'wdth' 62;
   line-height: 1;
   color: transparent;
   -webkit-text-stroke: 1px var(--text-muted);
@@ -1588,42 +1780,85 @@ a.pill:hover {
 }
 
 .step:hover .step-number {
-  color: var(--accent);
-  -webkit-text-stroke-color: var(--accent);
+  color: var(--text-strong);
+  -webkit-text-stroke-color: var(--text-strong);
 }
 
 .step h3 {
-  font-size: 1.15rem;
+  margin: 0;
+  font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
 }
 
 .step p {
   margin: 0;
-  font-size: 0.95rem;
-  color: var(--text-muted);
+  max-width: 48ch;
+  font-size: 1rem;
+  font-weight: 300;
+  color: var(--text);
 }
 
-/* The concierge band, styled like a shop's newsletter box. */
+/* The concierge band, staged like a launch page's sign-up: centred, lit from above, with a wheel
+   of fine spokes turning behind it. */
 .concierge-band {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   display: grid;
-  gap: 1.5rem;
-  align-items: center;
-  margin-top: 4.5rem;
-  padding: clamp(1.75rem, 4vw, 3rem);
+  justify-items: center;
+  gap: 1.75rem;
+  margin-top: clamp(4rem, 9vw, 7rem);
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.25rem, 4vw, 3rem);
   border-radius: var(--radius-xl);
-  background: var(--ink);
-  color: var(--ink-text);
+  background: radial-gradient(120% 90% at 50% 0%, var(--surface-3), var(--surface) 68%);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.band-wheel {
+  position: absolute;
+  z-index: -1;
+  top: 50%;
+  left: 50%;
+  width: min(140%, 860px);
+  translate: -50% -50%;
+  fill: none;
+  stroke: var(--text-strong);
+  stroke-width: 0.35;
+  opacity: 0.09;
+  animation: wheel-spin 60s linear infinite;
+}
+
+.band-wheel circle:first-child {
+  stroke-width: 3;
+}
+
+@keyframes wheel-spin {
+  to {
+    rotate: 360deg;
+  }
 }
 
 .concierge-band h2 {
-  max-width: 16ch;
+  max-width: 18ch;
   margin: 0;
-  font-size: clamp(1.6rem, 3.6vw, 2.5rem);
-  color: var(--ink-text);
+  font-size: clamp(1.9rem, 4.4vw, 3.2rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
 }
 
 .concierge-form {
   display: grid;
   gap: 0.75rem;
+  width: min(100%, 600px);
+}
+
+@media (min-width: 640px) {
+  .concierge-form {
+    grid-template-columns: 1fr auto;
+  }
 }
 
 .concierge-input {
@@ -1633,8 +1868,14 @@ a.pill:hover {
   min-height: 52px;
   padding: 0 1.15rem;
   border-radius: 999px;
-  background: var(--ink-text);
-  color: var(--ink);
+  background: var(--glass-strong);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  transition: border-color 0.25s ease;
+}
+
+.concierge-input:focus-within {
+  border-color: var(--text-strong);
 }
 
 .concierge-input input {
@@ -1644,21 +1885,20 @@ a.pill:hover {
   border: 0;
   background: transparent;
   outline: none;
-  color: var(--ink);
+  color: var(--text-strong);
 }
 
 .concierge-input input::placeholder {
-  color: color-mix(in srgb, var(--ink) 50%, transparent);
+  color: var(--text-muted);
 }
 
 .concierge-band .btn-dark {
   min-height: 52px;
-}
-
-@media (min-width: 900px) {
-  .concierge-band {
-    grid-template-columns: 1.1fr 1fr;
-  }
+  background: var(--ink);
+  color: var(--ink-text);
+  --bloom: var(--bg);
+  --bloom-text: var(--text-strong);
+  border-color: var(--ink);
 }
 
 .search-box input,
@@ -1902,7 +2142,14 @@ a.pill:hover {
 
 .product-logo .tool-logo {
   border-radius: 22px;
-  box-shadow: 0 18px 36px -14px rgba(0, 0, 0, 0.65);
+  box-shadow: 0 18px 36px -14px rgba(0, 0, 0, 0.7);
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.5s ease;
+}
+
+.product-card:hover .product-logo .tool-logo,
+.product-card:focus-within .product-logo .tool-logo {
+  filter: none;
 }
 
 .product-card:hover .product-logo {
@@ -1958,7 +2205,7 @@ a.pill:hover {
 }
 
 .product-quick:hover {
-  background: var(--accent);
+  background: var(--text-strong);
   color: var(--accent-contrast);
   text-decoration: none;
 }
@@ -1988,6 +2235,8 @@ a.pill:hover {
 .product-body h3 {
   margin: 0;
   font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
 .product-body h3 a {
@@ -4014,10 +4263,29 @@ a.pill:hover {
 /* ---------- Footer & 404 ---------------------------------------------------------------- */
 
 .site-footer {
-  margin-top: 4rem;
-  padding: 3rem 1rem calc(6.5rem + env(safe-area-inset-bottom, 0px));
+  margin-top: 1rem;
+  padding: 0 1rem calc(6.5rem + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border);
-  background: var(--surface);
+  background: var(--bg);
+}
+
+.footer-wordmark {
+  overflow: hidden;
+  max-width: var(--max-width);
+  margin: 0 auto 2.5rem;
+  font-family: var(--condensed);
+  font-size: clamp(5rem, 27vw, 21rem);
+  font-weight: 900;
+  font-stretch: 62%;
+  font-variation-settings: 'wdth' 62;
+  line-height: 0.82;
+  text-align: center;
+  letter-spacing: 0.02em;
+  color: transparent;
+  background: var(--wordmark-fill);
+  -webkit-background-clip: text;
+  background-clip: text;
+  user-select: none;
 }
 
 @media (min-width: 900px) {
@@ -4054,11 +4322,9 @@ a.pill:hover {
 
 .footer-col h3 {
   margin: 0 0 0.25rem;
-  font-family: var(--sans);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  letter-spacing: 0;
   color: var(--text-strong);
 }
 
@@ -4095,8 +4361,15 @@ a.pill:hover {
   color: var(--text-muted);
 }
 
-.footer-copy span:last-child {
+.footer-copy > span:last-child {
   max-width: 70ch;
+}
+
+.footer-credit {
+  display: block;
+  margin-top: 0.35rem;
+  font-weight: 500;
+  color: var(--text);
 }
 
 .not-found {
@@ -4145,6 +4418,22 @@ a.pill:hover {
 
   .shop-hero-art {
     min-height: 280px;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+  }
+
+  .hero-stats div {
+    margin-right: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero-stats dd {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
   }
 
   .tile-stack {
