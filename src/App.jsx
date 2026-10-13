@@ -2,25 +2,54 @@ import Announcements from './components/Announcements'
 import FloatingBars from './components/FloatingBars'
 import SuggestionDialog from './components/SuggestionDialog'
 import Footer from './components/Footer'
+import Intro from './components/Intro'
 import Navbar from './components/Navbar'
 import Spinner from './components/Spinner'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { PrefsProvider } from './context/PrefsContext'
-import Admin from './pages/Admin'
-import Categories from './pages/Categories'
-import Chat from './pages/Chat'
 import Home from './pages/Home'
-import Login from './pages/Login'
-import Marketplace from './pages/Marketplace'
 import NotFound from './pages/NotFound'
-import Profile from './pages/Profile'
-import Subscriptions from './pages/Subscriptions'
-import ToolDetail from './pages/ToolDetail'
-import VerifyEmail from './pages/VerifyEmail'
 import { usePresence } from './hooks'
 import { matchPath, navigate, useRoute } from './router'
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import './App.css'
+
+// The home page ships with the first load; every other page is its own chunk, fetched the first
+// time someone opens it, so the storefront paints without waiting for the admin or chat code.
+const pages = {
+  admin: () => import('./pages/Admin'),
+  categories: () => import('./pages/Categories'),
+  chat: () => import('./pages/Chat'),
+  login: () => import('./pages/Login'),
+  marketplace: () => import('./pages/Marketplace'),
+  profile: () => import('./pages/Profile'),
+  subscriptions: () => import('./pages/Subscriptions'),
+  toolDetail: () => import('./pages/ToolDetail'),
+  verifyEmail: () => import('./pages/VerifyEmail'),
+}
+const Admin = lazy(pages.admin)
+const Categories = lazy(pages.categories)
+const Chat = lazy(pages.chat)
+const Login = lazy(pages.login)
+const Marketplace = lazy(pages.marketplace)
+const Profile = lazy(pages.profile)
+const Subscriptions = lazy(pages.subscriptions)
+const ToolDetail = lazy(pages.toolDetail)
+const VerifyEmail = lazy(pages.verifyEmail)
+
+/** Once the browser is idle, warm the pages most visitors open next. */
+function usePrefetchPages() {
+  useEffect(() => {
+    const next = [pages.marketplace, pages.toolDetail, pages.chat, pages.categories, pages.login]
+    const warm = () => next.forEach((load) => load().catch(() => {}))
+    if ('requestIdleCallback' in window) {
+      const id = window.requestIdleCallback(warm, { timeout: 4000 })
+      return () => window.cancelIdleCallback(id)
+    }
+    const timer = setTimeout(warm, 2500)
+    return () => clearTimeout(timer)
+  }, [])
+}
 
 /** Pages that need an account send guests to sign in, then straight back. */
 function RequireUser({ children, admin = false, notice }) {
@@ -88,7 +117,7 @@ function PageTransition({ children }) {
   const path = useRoute()
   return (
     <main id="main" key={path} className="page-enter">
-      {children}
+      <Suspense fallback={<Spinner label="Loading" />}>{children}</Suspense>
     </main>
   )
 }
@@ -100,6 +129,7 @@ function Presence() {
 }
 
 export default function App() {
+  usePrefetchPages()
   return (
     <AuthProvider>
       <PrefsProvider>
@@ -114,6 +144,7 @@ export default function App() {
           <Announcements />
           <SuggestionDialog />
         </div>
+        <Intro />
       </PrefsProvider>
     </AuthProvider>
   )
